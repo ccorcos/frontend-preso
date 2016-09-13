@@ -1,0 +1,855 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="assets/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="assets/reveal.js/css/theme/night.css">
+        <link rel="stylesheet" href="assets/reveal.js/lib/css/zenburn.css">
+        <link rel="stylesheet" href="custom.css">
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                  <h2>Frontend Web @ Affirm</h2>
+                  <h5>by Chet Corcos (Sept 2016)</h5>
+                  <aside class="notes">
+                    `f` for full screen
+                    `s` for notes
+                  </aside>
+                </section>
+                <section>
+                  <h2>Overview</h2>
+                  <ul>
+                    <li>functional programming concepts</li>
+                    <li>bundlers, transpilers, type checkers, and build tools</li>
+                    <li>react and redux</li>
+                  </ul>
+                </section>
+                <section>
+                  <section>
+                    <h2>Functional Programming Concepts</h2>
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Currying">function currying</a></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Function_composition">function composition</a></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Pure_function">purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">immutablility</a></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">persistent data structures</a></li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
+                    <p><strong>What:</strong> functions that take arguments one at a time.</p>
+                    <pre>
+                      <code data-noescape>
+  const add = x => y => x + y
+
+  const add1 = add(1)
+  const add2 = add(2)
+
+  add1(10) // 11
+  add2(10) // 12
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
+                    <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Function_composition">function composition</a></p>
+                    <pre>
+                      <code data-noescape>
+  const pipe = fns => value =>
+    fns.reduce((f,v) => f(v), value)
+
+  pipe([
+    add(1),
+    times(2),
+    minus(3),
+  ])(4) // 7
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
+                    <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Tacit_programming">point-free</a> programming</p>
+                    <pre>
+                      <code data-noescape>
+  const pipe = fns => value =>
+    fns.reduce((f,v) => f(v), value)
+
+  const computation = pipe([
+    add(1),
+    times(2),
+    minus(3),
+  ])
+
+  // computation = x => {
+  //   const a = add(1)(x)
+  //   const b = times(2)(a)
+  //   const c = minus(3)(b)
+  //   return c
+  // }
+
+  computation(4) // 7
+  computation(5) // 9
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
+                    <p><strong>Example:</strong> handling CRM search response</p>
+                    <pre>
+                      <code data-noescape>
+  case defs.SEARCH_USER_SUCCESS_WITH_CHARGE:
+    return pipe([
+      mutate.setFetchingUser(false),
+      mutate.setUser(action.user),
+      mutate.setSidebarView({
+        key: 'loan-details',
+        props: { loanAri: action.charge },
+      }),
+      mutate.setSidebarOpen,
+    ], state)
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
+                    <p><strong>What:</strong></p>
+                    <ul>
+                      <li>a pure function returns the same output for the same input</li>
+                      <li>data should never be mutated "in-place" (with the same reference pointer)</li>
+                    </ul>
+                    <img src="https://drboolean.gitbooks.io/mostly-adequate-guide/content/images/function-sets.gif" alt="pure-function">
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
+                    <p><strong>Why:</strong></p>
+                    <ul>
+                      <li>easier to statically analyze</li>
+                      <li>easier to understand</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
+                    <p><strong>Example:</strong></p>
+                    <pre>
+                      <code>
+  var xs = [1, 2, 3, 4, 5]
+
+  // pure
+  xs.slice(0, 3)
+  //=> [1, 2, 3]
+
+  xs.slice(0, 3)
+  //=> [1, 2, 3]
+
+  xs.slice(0, 3)
+  //=> [1, 2, 3]
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
+                    <p><strong>Counter-example:</strong></p>
+                    <pre>
+                      <code>
+  var xs = [1, 2, 3, 4, 5]
+
+  // impure
+  xs.splice(0, 3)
+  //=> [1, 2, 3]
+
+  xs.splice(0, 3)
+  //=> [4, 5]
+
+  xs.splice(0, 3)
+  //=> []
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
+                    <p><strong>What:</strong> performant immutable updates</p>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
+                    <p><strong>Why:</strong></p>
+                    <ul>
+                      <li>cloning objects is inefficient</li>
+                      <li><a href="https://en.wikipedia.org/wiki/Thrashing_(computer_science)">garbage thrashing</a></li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
+                    <p><strong>Example:</strong> a <a href="https://en.wikipedia.org/wiki/Linked_list">linked-list</a>!</p>
+                    <pre>
+                      <code data-noescape>
+  const append = value => list => ({
+    value,
+    next: list
+  })
+
+  const list1 = {value: 1, next: undefined}
+  const list2 = append(2)(list1)
+
+  // "persisted" the previous data structure
+  list2.next === list1 // true
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/immutable-js/">ImmutableJS</a></h2>
+                    <p><strong>What:</strong></p>
+                    <ul>
+                      <li>persistent data structures library for JavaScript</li>
+                      <li>developed by Facebook</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
+                    <p><strong>Example:</strong> an <a href="https://facebook.github.io/immutable-js/">ImmutableJS</a> Map</p>
+                    <pre>
+                      <code data-noescape>
+  import { Map } from 'immutable'
+
+  const person = new Map({
+    name: 'chet',
+    age: 25,
+    profile: new Map({
+      homepage: 'https://chetcorcos.com'
+    })
+  })
+
+  const next = person.update('age', x => x + 1)
+
+  person.get('age') // 25
+  next.get('age') // 26
+  person.get('profile') === next.get('profile') // true
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Extra Resources</h2>
+                    <ul>
+                      <li><a href="http://fr.umio.us/why-ramda/">"Why Ramda?"</a> -- about currying, function composition, and point-free programming</li>
+                      <li><a href="https://drboolean.gitbooks.io/mostly-adequate-guide/content/">"Mostly Adequate Guide"</a> ...to functional programming in JavaScript</li>
+                      <li><a href="https://medium.com/@chetcorcos/functional-programming-for-javascript-people-1915d8775504">"Functional Programming for JavaScript People"</a></li>
+                    </ul>
+                  </section>
+                </section>
+                <section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Source-to-source_compiler">transpilers</a></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Lint_(software)">linters</a></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Type_system#Static_type_checking">static type checkers</a></li>
+                      <li>module bundlers</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://babeljs.io/">Babel</a></h2>
+                    <p><i>"Use next generation JavaScript, today."</i></p>
+                    <pre>
+                      <code data-noescape>
+  // ES6 before
+  [1,2,3].map(n => n + 1);
+
+  // ES5 after
+  [1,2,3].map(function(n) {
+    return n + 1;
+  });
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://babeljs.io/">Babel</a></h2>
+                    <p>Some new JavaScript standards:</p>
+                    <pre>
+                      <code data-noescape>
+  const f = (a, b, ...args) => {}
+
+  const min = Math.min(...list)
+
+  const object = {
+    ...other,
+    key: 'value',
+  }
+
+  const str = `string ${object.value} interpolation`
+
+  const fetchUsers = async userAri => fetch(`/api/users/${userAri}`)
+  const response = await fetchUsers('1234')
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
+                    <p><i>"Use tomorrow's CSS syntax, today."</i></p>
+                    <pre>
+                      <code data-noescape>
+  // before
+  :root {
+    --red: #d33;
+  }
+  a {
+    &:hover {
+      color: color(var(--red) alpha(54%));
+    }
+  }
+
+  // after
+  a:hover {
+    color: #dd3333;
+    color: rgba(221, 51, 51, 0.54);
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
+                    <p>Some new CSS standards:</p>
+                    <pre>
+                      <code data-noescape>
+  :root {
+    --text: #FFFFFF;
+    --primary: #123ABC;
+  }
+  nav {
+    background-color: var(--primary);
+    &:hover {
+      background-color: color(var(--primary) alpha(10%));
+    }
+    & h1 {
+      color: var(--text);
+    }
+    @nest .dark-theme & {
+      background-color: color(var(--primary) blackness(20%));
+      &:hover {
+        background-color: color(var(--primary)  blackness(20%) alpha(10%));
+      }
+    }
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
+                    <p><a href="https://github.com/postcss/autoprefixer">Autoprefix</a> with <a href="http://caniuse.com/"><i>Can I Use</i></a></p>
+                    <pre>
+                      <code data-noescape>
+  postcss: function(webpack) {
+    return [
+      require('postcss-cssnext')({
+        browser: '> 1%, last 2 versions, Firefox ESR, Opera 12.1',
+      }),
+    ]
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="http://eslint.org/">ESLint</a></h2>
+                    <p><i>"The pluggable linting utility for JavaScript"</i></p>
+                    <ul>
+                      <li>enforce code conventions</li>
+                      <li>find simple bugs</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="http://eslint.org/">ESLint</a></h2>
+                    <p><i>"The pluggable linting utility for JavaScript"</i></p>
+                    <pre>
+                      <code data-noescape>
+  const person = {
+    name: 'chet',
+    age: 25 // error Missing trailing comma.  comma-dangle
+  }
+
+  const inc = x => x + 1
+  inc(a) // error  "a" is not defined  no-undef
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://github.com/stylelint/stylelint">Stylelint</a></h2>
+                    <p><i>"A mighty, modern CSS linter that helps you enforce consistent conventions and avoid errors in your stylesheets."</i></p>
+                  </section>
+                  <section>
+                    <h2><a href="https://flowtype.org/">FlowType</a></h2>
+                    <p><i>"A static type checker for JavaScript"</i></p>
+                    <pre>
+                      <code data-noescape>
+  // @flow
+  function foo(x) {
+    return x * 10;
+  }
+  foo('Hello, world!');
+
+  //  5: foo('Hello, world!');
+  //     ^^^^^^^^^^^^^^^^^^^^ function call
+  //  3:   return x * 10;
+  //              ^ string. This type is incompatible with
+  //  3:   return x * 10;
+  //              ^^^^^^ number
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://flowtype.org/">FlowType</a></h2>
+                    <p><i>"A static type checker for JavaScript"</i></p>
+                    <pre>
+                      <code data-noescape>
+  // @flow
+  type Status = 'active' | 'inactive'
+
+  type Person = {
+    age: number,
+    name?: string,
+    status: Status,
+  }
+
+  const nextYear = (person : Person) : Person => ({
+    ...person,
+    age: person.age + 1
+  })
+
+  const next = nextYear({
+    age: 25,
+    status: 'active',
+  })
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><i>"Module Bundler"</i></p>
+                    <img src="https://webpack.github.io/assets/what-is-webpack.png" alt="what-is-webpack">
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong>Concept:</strong></p>
+                    <pre>
+                      <code>
+  // before
+  import SomeModule from 'path/to/some/module'
+  import OtherModule from 'path/to/other/module'
+  SomeModule.doSomething()
+  OtherModule.doSomething()
+
+  // after
+  modules = {
+    'path/to/some/module': memoize(function() {
+      // "some module" source code
+    }),
+    'path/to/other/module': memoize(function() {
+      // "other module" source code
+    })
+  }
+  modules['path/to/some/module']().doSomething()
+  modules['path/to/other/module']().doSomething()
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong>Notable features:</strong></p>
+                    <ul>
+                      <li><a href="https://webpack.github.io/docs/loaders.html">asset loaders</a></li>
+                      <li>modular components</li>
+                      <li><a href="https://webpack.github.io/docs/list-of-plugins.html#defineplugin">compile-time feature flags</a></li>
+                      <li><a href="https://webpack.github.io/docs/hot-module-replacement.html">hot-module replacement</a></li>
+                      <li><a href="https://webpack.github.io/docs/multiple-entry-points.html">code splitting</a></li>
+                      <li><a href="https://webpack.github.io/docs/code-splitting.html">async module loading</a></li>
+                      <li><a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">tree shaking</a></li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="https://webpack.github.io/docs/loaders.html">Asset Loaders</a>:</strong> manage all assets through JavaScript</p>
+                    <pre>
+                      <code data-noescape>
+  webpackConfig = {
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: ['babel'],
+      },
+      {
+        test: /\.css$/,
+        loader: ['style', 'css', 'postcss'],
+      },
+    ]
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong>Modularized Components:</strong> components that import their own CSS</p>
+                    <pre>
+                      <code data-noescape>
+  import React from 'react'
+  import 'affirm/badge/style.css'
+
+  const Badge = (props) =>
+    &lt;div className="badge"&gt;
+      {props.children}
+    &lt;/div&gt;
+
+  export default Badge
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="https://webpack.github.io/docs/list-of-plugins.html#defineplugin">Feature Flags</a>:</strong> enable/disable development tools at compile-time</p>
+                    <pre>
+                      <code>
+  if (process.env.NODE_ENV === 'development') {
+    const devtool = require('redux-devtool')
+    devtool.configure()
+  }
+  if (process.env.NODE_ENV === 'production') {
+    tracking.start()
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="https://webpack.github.io/docs/hot-module-replacement.html">Hot Module Replacement</a>:</strong> blazingly fast rebuilds</p>
+                    <pre>
+                      <code>
+  const callback = event =>
+    console.log(event)
+
+  window.events.subscribe(callback)
+
+  if (module.hot) {
+    module.hot.accept()
+    module.hot.dispose(() => {
+      // cleanup any statefulness
+      window.events.unsubscribe(callback)
+    })
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="https://webpack.github.io/docs/multiple-entry-points.html">Code Splitting</a>:</strong> break up application into mutliple entry points</p>
+                    <pre>
+                      <code>
+  module.exports = {
+    entry: {
+      portal: "./src/portal.js",
+      login: "./src/login.js",
+    },
+    output: {
+      filename: "[name]-[hash].js",
+    },
+    plugins: [
+      new webpack.optimize.CommonsChunkPlugin("common-[hash].js"),
+    ],
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="">Common Chunking</a>:</strong> reuse common code for each entry point</p>
+                    <pre>
+                      <code>
+  &lt;!-- portal.html --&gt;
+  &lt;script src='portal-1ed1x3232w.js'&gt;
+  &lt;script src='common-djs39dn39s.js'&gt;
+
+  &lt;!-- login.html --&gt;
+  &lt;script src='login-sufnew3if8.js'&gt;
+  &lt;script src='common-djs39dn39s.js'&gt;
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="https://webpack.github.io/docs/code-splitting.html">Async Module Loading</a>:</strong> fetch source code on-demand</p>
+                    <pre>
+                      <code>
+  // routes.js
+
+  page('/login', async () => {
+    render(&lt;Loading/&gt;)
+    const Login = await System.load('./src/login')
+    render(&lt;Login/&gt;)
+  })
+
+  page('/portal', async () => {
+    render(&lt;Loading/&gt;)
+    const Portal = await System.load('./src/portal')
+    render(&lt;Portal/&gt;)
+  })
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
+                    <p><strong><a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">Tree Shaking</a>:</strong> elminate unused codepaths</p>
+                    <pre>
+                      <code>
+  // before
+  function add(a, b) {
+    return a + b
+  }
+  function subtract(a, b) {
+    return a - b
+  }
+  subtract(2, 1)
+
+  // after
+  function subtract(a, b) {
+    return a - b
+  }
+  subtract(2, 1)
+                      </code>
+                    </pre>
+                  </section>
+                </section>
+                <section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a> and <a href="redux.js.org">Redux</a></h2>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p><strong>What:</strong></p>
+                    <ul>
+                      <li>declarative UI rendering using <a href="https://facebook.github.io/react/docs/reconciliation.html">virtual dom diffing</a></li>
+                      <li>developed by Facebook</li>
+                      <li><a href="https://facebook.github.io/react/docs/events.html">cross-browser sanitized event system</a></li>
+                      <li><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">optional HTML dialect called JSX</a></li>
+                      <li><a href="https://www.npmjs.com/package/react-dom">DOM</a>, <a href="https://github.com/Flipboard/react-canvas">HTML5 Canvas</a>, <a href="https://github.com/toxicFork/react-three-renderer">WebGL</a>, <a href="https://github.com/Yomguithereal/react-blessed">Terminal</a>, <a href="https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=react-native">iOS, and Android</a> renderers</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p><strong>Example</strong>: Hello World</p>
+                    <pre>
+                      <code>
+  import React from 'react'
+  import ReactDOM from 'react-dom'
+
+  const App = (props) =>
+    &lt;div className="app"&gt;
+      Hello World
+    &lt;/div&gt;
+
+  const root = document.getElementById('root')
+  ReactDOM.render(&lt;App/&gt;, root)
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p><strong>Example:</strong> Hello {name}</p>
+                    <pre>
+                      <code>
+  import React from 'react'
+  import ReactDOM from 'react-dom'
+
+  const App = (props) =>
+    &lt;div className="app"&gt;
+      Hello {props.name}
+    &lt;/div&gt;
+
+  const root = document.getElementById('root')
+  ReactDOM.render(&lt;App name="chet"/&gt;, root)
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p><strong><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a>:</strong> HTML-flavored JavaScript</p>
+                    <pre>
+                      <code>
+  // before
+  const App = (props) =>
+    &lt;div className="app"&gt;
+      Hello {props.name}
+    &lt;/div&gt;
+  ReactDOM.render(&lt;App name="chet"/&gt;, root)
+
+  // after
+  const App = (props) =>
+    React.createElement('div', {className:'app'}, [
+      `Hello ${props.name}`
+    ])
+  ReactDOM.render(React.createElement(App, {name:'chet'}), root)
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p><strong>Example:</strong> iOS renderer example</p>
+                    <pre>
+                      <code>
+  import React from 'react'
+  import { AppRegistry } from 'react-native'
+  import View1 from './src/view1'
+  import View2 from './src/view1'
+
+  const App = (props) =>
+    &lt;TabBarIOS&gt;
+      &lt;TabBarIOS.Item title="view1" icon={icon1}&gt;
+        &lt;View1/&gt;
+      &lt;/TabBarIOS.Item&gt;
+      &lt;TabBarIOS.Item title="view2" icon={icon2}&gt;
+        &lt;View2/&gt;
+      &lt;/TabBarIOS.Item&gt;
+    &lt;/TabBarIOS&gt;
+
+  // the rest is handled in swift
+  AppRegistry.registerComponent('App', &lt;App/&gt;)
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><i>"A predictable state container for JavaScript apps"</i></p>
+                    <ul>
+                      <li>views and logic are all pure functions</li>
+                      <li>global event bus</li>
+                      <li>state machine using a reducing function</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><strong>Concept:</strong></p>
+                    <pre>
+                      <code>
+  import { createStore } from 'redux'
+
+  const initialState = { count: 0 }
+  const reducer = (state=initialState, action) => {
+    switch(action.type) {
+      case 'increment':
+        return {
+          ...state,
+          count: state.count + 1,
+        }
+    }
+  }
+
+  const store = createStore(reducer)
+
+  store.getState() // { count: 0 }
+  store.dispatch({type: 'increment'})
+  store.getState() // { count: 1 }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><strong>Example:</strong> Vanilla JS</p>
+                    <pre>
+                      <code>
+  store.subscribe(state => {
+    const root = document.getElementById('root')
+    root.innerHTML = `
+      <div>
+        <button id="increment">increment</button>
+        <span>${state.count}</span>
+      </div>
+    `
+    document.getElementById('incremenet').on('click', () => {
+      store.dispatch({type: 'increment'})
+    })
+  })
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><strong>Example:</strong> React</p>
+                    <pre>
+                      <code>
+  import { connect } from 'react-redux'
+
+  const CounterView = (props) =>
+    <div>
+      <button onClick={props.increment}>increment</button>
+      <span>{props.count}</span>
+    </div>
+
+  const mapStateToProps = state => ({
+    count: state.count
+  })
+
+  const mapDispatchToProp = dispatch => ({
+    increment: () => dispatch({type: 'increment'})
+  })
+
+  const Counter = connect(mapStateToProps, mapDispatchToProp)(Counter)
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><strong>Middleware:</strong> get inbetween dispatch and the reducer</p>
+                    <pre>
+                      <code>
+  import track from 'shared/src/scripts/analytics/tracking'
+
+  const middleware = store => next => action => {
+    track.event('redux_action', { action })
+    return next(action)
+  }
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><strong>Dev Tools:</strong> chrome extension</p>
+                    <img class="large" src="assets/redux-chrome-extension.png" alt="redux-chrome-extension">
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p><strong>Time Travel:</strong> replay sessions</p>
+                    <img class="large" src="assets/time-travel.png" alt="time-travel">
+                  </section>
+                </section>
+                </section>
+            </div>
+        </div>
+        <script src="assets/reveal.js/lib/js/head.min.js"></script>
+        <script src="assets/reveal.js/js/reveal.js"></script>
+        <script>
+            Reveal.initialize({
+              history: true,
+              dependencies: [
+                // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+                { src: 'assets/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+
+                // Interpret Markdown in <section> elements
+                { src: 'assets/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                { src: 'assets/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+
+                // Syntax highlight for <code> elements
+                { src: 'assets/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+
+                // Zoom in and out with Alt+click
+                { src: 'assets/reveal.js/plugin/zoom-js/zoom.js', async: true },
+
+                // Speaker notes
+                { src: 'assets/reveal.js/plugin/notes/notes.js', async: true },
+
+                // MathJax
+                { src: 'assets/reveal.js/plugin/math/math.js', async: true }
+              ]
+            });
+        </script>
+    </body>
+</html>
+<!--
+- speaker notes
+
+- future
+  - static type checker
+
+-->
