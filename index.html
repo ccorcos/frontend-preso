@@ -38,7 +38,7 @@
                     <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
                     <p><strong>What:</strong> functions that take arguments one at a time.</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   const add = x => y => x + y
 
   const add1 = add(1)
@@ -53,23 +53,7 @@
                     <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
                     <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Function_composition">function composition</a></p>
                     <pre>
-                      <code data-noescape>
-  const pipe = fns => value =>
-    fns.reduce((f,v) => f(v), value)
-
-  pipe([
-    add(1),
-    times(2),
-    minus(3),
-  ])(4) // 7
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
-                    <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Tacit_programming">point-free</a> programming</p>
-                    <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   const pipe = fns => value =>
     fns.reduce((f,v) => f(v), value)
 
@@ -79,15 +63,32 @@
     minus(3),
   ])
 
-  // computation = x => {
-  //   const a = add(1)(x)
-  //   const b = times(2)(a)
-  //   const c = minus(3)(b)
-  //   return c
-  // }
-
   computation(4) // 7
-  computation(5) // 9
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
+                    <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Tacit_programming">point-free</a> programming</p>
+                    <pre>
+                      <code data-noescape class="language-js">
+
+  const computation1 = pipe([
+    add(1),
+    times(2),
+    // somethingElse(4),
+    minus(3),
+  ])
+
+  computation2 = x => {
+    const a = add(1)(x)
+    const b = times(2)(a)
+    // const d = somethingElse(4)(b)
+    // const c = minus(3)(d)
+    const c = minus(3)(b)
+    return c
+  }
+
                       </code>
                     </pre>
                   </section>
@@ -95,7 +96,7 @@
                     <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
                     <p><strong>Example:</strong> handling CRM search response</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   case defs.SEARCH_USER_SUCCESS_WITH_CHARGE:
     return pipe([
       mutate.setFetchingUser(false),
@@ -122,15 +123,16 @@
                     <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
                     <p><strong>Why:</strong></p>
                     <ul>
-                      <li>easier to statically analyze</li>
                       <li>easier to understand</li>
+                      <li>easier to statically analyze</li>
+                      <li>easier to mathematically analyze</li>
                     </ul>
                   </section>
                   <section>
                     <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
                     <p><strong>Example:</strong></p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   var xs = [1, 2, 3, 4, 5]
 
   // pure
@@ -149,7 +151,7 @@
                     <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
                     <p><strong>Counter-example:</strong></p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   var xs = [1, 2, 3, 4, 5]
 
   // impure
@@ -165,22 +167,25 @@
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
-                    <p><strong>What:</strong> performant immutable updates</p>
-                  </section>
-                  <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
-                    <p><strong>Why:</strong></p>
+                    <h2><a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
+                    <p><strong>Problems:</strong></p>
                     <ul>
                       <li>cloning objects is inefficient</li>
                       <li><a href="https://en.wikipedia.org/wiki/Thrashing_(computer_science)">garbage thrashing</a></li>
                     </ul>
                   </section>
                   <section>
+                    <h2><a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
+                    <p><strong>Solutions:</strong></p>
+                    <ul>
+                      <li><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">persistent data structures</a></li>
+                    </ul>
+                  </section>
+                  <section>
                     <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
                     <p><strong>Example:</strong> a <a href="https://en.wikipedia.org/wiki/Linked_list">linked-list</a>!</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   const append = value => list => ({
     value,
     next: list
@@ -206,7 +211,7 @@
                     <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
                     <p><strong>Example:</strong> an <a href="https://facebook.github.io/immutable-js/">ImmutableJS</a> Map</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   import { Map } from 'immutable'
 
   const person = new Map({
@@ -217,11 +222,13 @@
     })
   })
 
-  const next = person.update('age', x => x + 1)
-
+  // immutably update the person's age
+  const updatedPerson = person.update('age', x => x + 1)
   person.get('age') // 25
-  next.get('age') // 26
-  person.get('profile') === next.get('profile') // true
+  updatedPerson.get('age') // 26
+
+  // verify that the rest of the data structure was persisted
+  person.get('profile') === updatedPerson.get('profile') // true
                       </code>
                     </pre>
                   </section>
@@ -248,7 +255,7 @@
                     <h2><a href="https://babeljs.io/">Babel</a></h2>
                     <p><i>"Use next generation JavaScript, today."</i></p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   // ES6 before
   [1,2,3].map(n => n + 1);
 
@@ -263,7 +270,7 @@
                     <h2><a href="https://babeljs.io/">Babel</a></h2>
                     <p>Some new JavaScript standards:</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   const f = (a, b, ...args) => {}
 
   const min = Math.min(...list)
@@ -284,8 +291,8 @@
                     <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
                     <p><i>"Use tomorrow's CSS syntax, today."</i></p>
                     <pre>
-                      <code data-noescape>
-  // before
+                      <code data-noescape class="language-css">
+  /* before */
   :root {
     --red: #d33;
   }
@@ -295,7 +302,7 @@
     }
   }
 
-  // after
+  /* after */
   a:hover {
     color: #dd3333;
     color: rgba(221, 51, 51, 0.54);
@@ -307,7 +314,7 @@
                     <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
                     <p>Some new CSS standards:</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-css">
   :root {
     --text: #FFFFFF;
     --primary: #123ABC;
@@ -334,7 +341,7 @@
                     <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
                     <p><a href="https://github.com/postcss/autoprefixer">Autoprefix</a> with <a href="http://caniuse.com/"><i>Can I Use</i></a></p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   postcss: function(webpack) {
     return [
       require('postcss-cssnext')({
@@ -357,7 +364,7 @@
                     <h2><a href="http://eslint.org/">ESLint</a></h2>
                     <p><i>"The pluggable linting utility for JavaScript"</i></p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   const person = {
     name: 'chet',
     age: 25 // error Missing trailing comma.  comma-dangle
@@ -376,7 +383,7 @@
                     <h2><a href="https://flowtype.org/">FlowType</a></h2>
                     <p><i>"A static type checker for JavaScript"</i></p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   // @flow
   function foo(x) {
     return x * 10;
@@ -396,7 +403,7 @@
                     <h2><a href="https://flowtype.org/">FlowType</a></h2>
                     <p><i>"A static type checker for JavaScript"</i></p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   // @flow
   type Status = 'active' | 'inactive'
 
@@ -427,7 +434,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong>Concept:</strong></p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   // before
   import SomeModule from 'path/to/some/module'
   import OtherModule from 'path/to/other/module'
@@ -465,7 +472,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="https://webpack.github.io/docs/loaders.html">Asset Loaders</a>:</strong> manage all assets through JavaScript</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   webpackConfig = {
     loaders: [
       {
@@ -485,7 +492,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong>Modularized Components:</strong> components that import their own CSS</p>
                     <pre>
-                      <code data-noescape>
+                      <code data-noescape class="language-js">
   import React from 'react'
   import 'affirm/badge/style.css'
 
@@ -502,7 +509,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="https://webpack.github.io/docs/list-of-plugins.html#defineplugin">Feature Flags</a>:</strong> enable/disable development tools at compile-time</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   if (process.env.NODE_ENV === 'development') {
     const devtool = require('redux-devtool')
     devtool.configure()
@@ -517,7 +524,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="https://webpack.github.io/docs/hot-module-replacement.html">Hot Module Replacement</a>:</strong> blazingly fast rebuilds</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   const callback = event =>
     console.log(event)
 
@@ -537,7 +544,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="https://webpack.github.io/docs/multiple-entry-points.html">Code Splitting</a>:</strong> break up application into mutliple entry points</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   module.exports = {
     entry: {
       portal: "./src/portal.js",
@@ -557,7 +564,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="">Common Chunking</a>:</strong> reuse common code for each entry point</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-html">
   &lt;!-- portal.html --&gt;
   &lt;script src='portal-1ed1x3232w.js'&gt;
   &lt;script src='common-djs39dn39s.js'&gt;
@@ -572,7 +579,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="https://webpack.github.io/docs/code-splitting.html">Async Module Loading</a>:</strong> fetch source code on-demand</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   // routes.js
 
   page('/login', async () => {
@@ -593,7 +600,7 @@
                     <h2><a href="https://webpack.github.io/">Webpack</a></h2>
                     <p><strong><a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">Tree Shaking</a>:</strong> elminate unused codepaths</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   // before
   function add(a, b) {
     return a + b
@@ -621,17 +628,17 @@
                     <p><strong>What:</strong></p>
                     <ul>
                       <li>declarative UI rendering using <a href="https://facebook.github.io/react/docs/reconciliation.html">virtual dom diffing</a></li>
-                      <li>developed by Facebook</li>
                       <li><a href="https://facebook.github.io/react/docs/events.html">cross-browser sanitized event system</a></li>
                       <li><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">optional HTML dialect called JSX</a></li>
                       <li><a href="https://www.npmjs.com/package/react-dom">DOM</a>, <a href="https://github.com/Flipboard/react-canvas">HTML5 Canvas</a>, <a href="https://github.com/toxicFork/react-three-renderer">WebGL</a>, <a href="https://github.com/Yomguithereal/react-blessed">Terminal</a>, <a href="https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=react-native">iOS, and Android</a> renderers</li>
+                      <li>developed by Facebook</li>
                     </ul>
                   </section>
                   <section>
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong>Example</strong>: Hello World</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   import React from 'react'
   import ReactDOM from 'react-dom'
 
@@ -649,7 +656,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong>Example:</strong> Hello {name}</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   import React from 'react'
   import ReactDOM from 'react-dom'
 
@@ -667,7 +674,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a>:</strong> HTML-flavored JavaScript</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   // before
   const App = (props) =>
     &lt;div className="app"&gt;
@@ -688,7 +695,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong>Example:</strong> iOS renderer example</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   import React from 'react'
   import { AppRegistry } from 'react-native'
   import View1 from './src/view1'
@@ -714,7 +721,7 @@
                     <p><i>"A predictable state container for JavaScript apps"</i></p>
                     <ul>
                       <li>views and logic are all pure functions</li>
-                      <li>global event bus</li>
+                      <li>global action event bus</li>
                       <li>state machine using a reducing function</li>
                     </ul>
                   </section>
@@ -722,7 +729,7 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Concept:</strong></p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   import { createStore } from 'redux'
 
   const initialState = { count: 0 }
@@ -748,14 +755,14 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Example:</strong> Vanilla JS</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   store.subscribe(state => {
     const root = document.getElementById('root')
     root.innerHTML = `
-      <div>
-        <button id="increment">increment</button>
-        <span>${state.count}</span>
-      </div>
+      &lt;div&gt;
+        &lt;button id="increment"&gt;increment&lt;/button&gt;
+        &lt;span&gt;${state.count}&lt;/span&gt;
+      &lt;/div&gt;
     `
     document.getElementById('incremenet').on('click', () => {
       store.dispatch({type: 'increment'})
@@ -768,24 +775,24 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Example:</strong> React</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   import { connect } from 'react-redux'
 
   const CounterView = (props) =>
-    <div>
-      <button onClick={props.increment}>increment</button>
-      <span>{props.count}</span>
-    </div>
+    &lt;div&gt;
+      &lt;button onClick={props.increment}&gt;increment&lt;/button&gt;
+      &lt;span&gt;{props.count}&lt;/span&gt;
+    &lt;/div&gt;
 
   const mapStateToProps = state => ({
     count: state.count
   })
 
-  const mapDispatchToProp = dispatch => ({
+  const mapDispatchToProps = dispatch => ({
     increment: () => dispatch({type: 'increment'})
   })
 
-  const Counter = connect(mapStateToProps, mapDispatchToProp)(Counter)
+  const Counter = connect(mapStateToProps, mapDispatchToProps)(CounterView)
                       </code>
                     </pre>
                   </section>
@@ -793,7 +800,7 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Middleware:</strong> get inbetween dispatch and the reducer</p>
                     <pre>
-                      <code>
+                      <code data-noescape class="language-js">
   import track from 'shared/src/scripts/analytics/tracking'
 
   const middleware = store => next => action => {
@@ -814,7 +821,408 @@
                     <img class="large" src="assets/time-travel.png" alt="time-travel">
                   </section>
                 </section>
+              </section>
+              <section>
+                <section>
+                  <h2>Example</h2>
+                  <ul>
+                    <li>How to build a modular UI component?</li>
+                    <li>How to add the component to the Styleguide?</li>
+                    <li>How to wire up the component into an app?</li>
+                  </ul>
                 </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Lets build a "progress" component:</strong></p>
+                  <img src="assets/progress.png" alt="progress-example">
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Create the index.js and style.css files</strong></p>
+                  <img src="assets/file-structure.png" alt="file-structure">
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Import React and the CSS file</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+
+  // affirm/progress/index.js
+
+  import React from 'react'
+  import 'affirm/progress/style.css'
+
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Build the component</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+
+  // affirm/progress/index.js
+
+  const Progress = (props) => {
+    const width = `${props.percent}%`
+    return (
+      &lt;div className="progress-bar"&gt;
+        &lt;div className="progress-bar__fill" style={{ width }}/&gt;
+      &lt;/div&gt;
+    )
+  }
+
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define the component's propTypes</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+
+  // affirm/progress/index.js
+
+  Progress.propTypes = {
+    percent: React.PropTypes.number.isRequired,
+  }
+
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Import the base CSS file</strong></p>
+                  <pre>
+                    <code data-noescape class="language-css">
+
+  /* affirm/progress/style.js */
+
+  @import 'affirm/styles/base';
+
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Write some CSS styles</strong></p>
+                  <pre>
+                    <code data-noescape class="language-css">
+
+  /* affirm/progress/style.js */
+
+  .progress-bar {
+    width: 100%;
+    height: var(--spacing-small);
+    border-radius: var(--border-radius);
+    background-color: var(--black-10);
+    margin-bottom: var(--spacing-large);
+  }
+
+  .progress-bar__fill {
+    height: 100%;
+    background-color: var(--indigo);
+    border-radius: var(--border-radius);
+  }
+
+
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Please use <a href="https://css-tricks.com/bem-101/">BEM CSS naming conventions</a>!</strong></p>
+                  <pre>
+                    <code data-noescape class="language-css">
+
+  /* Block component */
+  .btn {}
+
+  /* Element that depends upon the block */
+  .btn__price {}
+
+  /* Modifier that changes the style of the block */
+  .btn--orange {}
+  .btn--big {}
+
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Create a guide in the Styleguide</strong></p>
+                  <img src="assets/progress-guide.png" alt="progress-guide" style="height: 40vh;">
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Create a guide in the Styleguide</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  import React from 'react'
+  import Guide from 'styleguide/src/guide'
+  import Progress from 'affirm/progress'
+
+  const ProgressBars = () =&gt;
+    &lt;Guide title="Progress"&gt;
+      &lt;Guide.Section title="Guidelines"&gt;
+        &lt;p&gt;Use this progress indicator do show a percentage of completion.&lt;/p&gt;
+      &lt;/Guide.Section&gt;
+      &lt;Guide.Section title="Progress"&gt;
+        &lt;Progress percent={0}/&gt;
+        &lt;Progress percent={25}/&gt;
+        &lt;Progress percent={50}/&gt;
+        &lt;Progress percent={75}/&gt;
+        &lt;Progress percent={100}/&gt;
+      &lt;/Guide.Section&gt;
+    &lt;/Guide&gt;
+
+  export default ProgressBars
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Should I put this component in the Styleguide?</strong></p>
+                  <ul>
+                    <li>Will this component be reused in other applications?</li>
+                    <li>What user interaction am I not currently able to do with the existing set of components?</li>
+                    <li>New Styleguide components should be UX driven not product driven.</li>
+                  </ul>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Wiring up a Counter component</strong></p>
+                  <ul>
+                    <li>synchronous action to increment the counter</li>
+                    <li>asynchronous action to decrement the counter</li>
+                    <li>REST endpoint to decrement the counter</li>
+                  </ul>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Create a mock endpoint</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/server.js
+
+  app.post('/decrement', function(request, response) {
+    const count = request.body.count
+    const result = { count: count - 1 }
+    // 1 second delay on the response
+    setTimeout(function() {
+      response.send(result)
+    }, 1000)
+  })
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Create a client side function to make the HTTP request</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/api.js
+
+  export async function decrement(count) {
+    return fetch('/decrement', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ count }),
+    })
+  }
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define some action types</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/defs.js
+
+  export const INCREMENT = 'counter/increment'
+  export const DECREMENT_SENT = 'counter/decrement/sent'
+  export const DECREMENT_SUCCESS = 'counter/decrement/success'
+  export const DECREMENT_FAILED = 'counter/decrement/failed'
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define the synchronous actions creators</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/actions/sync.js
+
+  export const increment = () => ({
+    type: defs.INCREMENT,
+  })
+
+  export const decrementSent = () => ({
+    type: defs.DECREMENT_SENT
+  })
+
+  export const decrementSuccess = count => ({
+    type: defs.DECREMENT_SUCCESS,
+    count,
+  })
+
+  export const decrementFailed = () => ({
+    type: defs.DECREMENT_FAILED,
+  })
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define the async action creators</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/actions/async.js
+
+  export function decrement(count) {
+    return async dispatch => {
+      dispatch(sync.decrementSent())
+      const response = await api.decrement(count)
+      if (response.status !== 200) {
+        dispatch(sync.decrementFailed())
+      } else {
+        const result = await response.json()
+        dispatch(sync.decrementSuccess(result.count))
+        return result.count
+      }
+    }
+  }
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define the initial state</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/reducer/index.js
+
+  const initialState = Immutable.Map({
+    count: 0,
+    pendingDecrement: false,
+  })
+
+  const reducer = (state=initialState, action) => {
+    // we'll get back to this
+  }
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define the state mutators</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/reducer/mutators.js
+
+  export const increment = state =>
+    state.updateIn(['count'], count => count + 1)
+
+  export const setDecrementPending = value => state =>
+    state.setIn(['pendingDecrement'], value)
+
+  export const setCount = value => state =>
+    state.setIn(['count'], value)
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Define the state reducer</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/reducer/index.js
+
+  const reducer = (state=initialState, action) => {
+    case defs.INCREMENT:
+      return mutate.increment(state)
+    case defs.DECREMENT_SENT:
+      return mutate.setDecrementPending(true)(state)
+    case defs.DECREMENT_SUCCESS:
+      return pipe([
+        mutate.setDecrementPending(false),
+        mutate.setCount(action.count),
+      ], state)
+    case defs.DECREMENT_FAILED:
+      return pipe([
+        mutate.setDecrementPending(false),
+        mutate.addSnackbarItem('Decrement counter failed.'),
+      ], state)
+    default:
+      return state
+  }
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Wire up the component</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/components/counter/index.js
+
+  import React from 'react'
+  import { connect } from 'react-redux'
+  import Counter from 'app/src/components/counter/view'
+  import { increment, decrement } from 'crm/src/actions'
+
+  // get the relevant state
+  const mapStateToProps = state => ({
+    disabled: state.getIn(['pendingDecrement']),
+    count: state.getIn(['count']),
+  })
+
+  // continued...
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Wire up the component</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  // app/src/components/counter/index.js
+
+  // wire up the actions
+  const mapDispatchToProps = dispatch => ({
+    onIncrement: () => dispatch(increment()),
+    onDecrement: count => dispatch(decrement(count))
+  })
+
+  // connect the component to redux
+  export default connect(mapStateToProps, mapDispatchToProps)(Counter)
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Example</h2>
+                  <p><strong>Use the component wherever you'd like</strong></p>
+                  <pre>
+                    <code data-noescape class="language-js">
+  import Counter from 'app/src/components/counter'
+
+  // &lt;Counter/&gt;
+                    </code>
+                  </pre>
+                </section>
+                <section>
+                  <h2>Demo Time</h2>
+                  <ul>
+                    <li>Affirm Styleguide + Modular UI Components</li>
+                    <li>CRM + Redux Dev Tools</li>
+                    <li>Static type checking with Flow</li>
+                  </ul>
+                </section>
+              </section>
             </div>
         </div>
         <script src="assets/reveal.js/lib/js/head.min.js"></script>
@@ -830,7 +1238,7 @@
                 { src: 'assets/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                 { src: 'assets/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 
-                // Syntax highlight for <code> elements
+                // Syntax highlight for <code data-noescape class="language-js"> elements
                 { src: 'assets/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 
                 // Zoom in and out with Alt+click
@@ -846,10 +1254,3 @@
         </script>
     </body>
 </html>
-<!--
-- speaker notes
-
-- future
-  - static type checker
-
--->
