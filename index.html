@@ -1,3 +1,29 @@
+<!--
+pure and immutable are easier to predict
+slice vs splice example
+just show the example and explain that its easier and dont be so detailed
+
+what is immutability?
+
+why do we need build tools?
+why do we want transpilers?
+
+why and then what
+
+why is react better than angular
+picture of the react result
+more why with react native
+
+less generic redux example. start with why / problem
+
+why modular component?
+
+- BEM
+
+what is a styleguide. demo before we add it.
+
+-->
+
 <html>
     <head>
         <link rel="stylesheet" href="assets/reveal.js/css/reveal.css">
@@ -19,216 +45,648 @@
                 <section>
                   <h2>Overview</h2>
                   <ul>
-                    <li>functional programming concepts</li>
-                    <li>bundlers, transpilers, type checkers, and build tools</li>
+                    <li>functional programming</li>
+                    <li>build tools</li>
                     <li>react and redux</li>
+                    <li>examples and demos</li>
                   </ul>
                 </section>
                 <section>
                   <section>
-                    <h2>Functional Programming Concepts</h2>
-                    <ul>
-                      <li><a href="https://en.wikipedia.org/wiki/Currying">function currying</a></li>
-                      <li><a href="https://en.wikipedia.org/wiki/Function_composition">function composition</a></li>
-                      <li><a href="https://en.wikipedia.org/wiki/Pure_function">purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">immutablility</a></li>
-                      <li><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">persistent data structures</a></li>
-                    </ul>
+                    <h2>Functional Programming</h2>
+                    <p class="fragment">... in JavaScript</p>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
-                    <p><strong>What:</strong> functions that take arguments one at a time.</p>
+                    <h2>Functional Programming</h2>
+                    <p>Suppose we have a user that looks like this:</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  const add = x => y => x + y
-
-  const add1 = add(1)
-  const add2 = add(2)
-
-  add1(10) // 11
-  add2(10) // 12
+                      <code data-trim data-noescape class="language-js">
+const me = {
+  name: {
+    first: 'Chet',
+    last: 'Corcos',
+  },
+  birthday: {
+    month: 12,
+    day: 28,
+  },
+}
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
-                    <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Function_composition">function composition</a></p>
+                    <h2>Functional Programming</h2>
+                    <p>Maybe we want to know if today is this user's birthday:</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  const pipe = fns => value =>
-    fns.reduce((f,v) => f(v), value)
+                      <code data-trim data-noescape class="language-js">
+// const me = {
+//   name: {
+//     first: 'Chet',
+//     last: 'Corcos',
+//   },
+//   birthday: {
+//     month: 12,
+//     day: 28,
+//   },
+// }
 
-  const computation = pipe([
-    add(1),
-    times(2),
-    minus(3),
-  ])
-
-  computation(4) // 7
+const isBirthday = (user, date) => {
+  return date.getMonth() + 1 === user.birthday.month // month is zero indexed
+      &amp;&amp; date.getDate() === user.birthday.day
+}
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
-                    <p><strong>Why:</strong> <a href="https://en.wikipedia.org/wiki/Tacit_programming">point-free</a> programming</p>
+                    <h2>Functional Programming</h2>
+                    <p>Maybe we want to format the user info:</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
+// const me = {
+//   name: {
+//     first: 'Chet',
+//     last: 'Corcos',
+//   },
+//   birthday: {
+//     month: 12,
+//     day: 28,
+//   },
+// }
 
-  const computation1 = pipe([
-    add(1),
-    times(2),
-    // somethingElse(4),
-    minus(3),
-  ])
+const formatUser = user => {
+  user.name = user.name.first + user.name.last
+  user.birthday = user.birthday.month + '/' + user.birthday.day
+  return user
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Let's see if it works:</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const today = new Date()
 
-  computation2 = x => {
-    const a = add(1)(x)
-    const b = times(2)(a)
-    // const d = somethingElse(4)(b)
-    // const c = minus(3)(d)
-    const c = minus(3)(b)
-    return c
+isBirthday(me, today) // false
+
+formatUser(me) // {name: 'Chet Corcos', birthday: '12/18'}
+
+isBirthday(me, today) <span class="fragment">// Error?!</span>
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>The problem is <i>in-place mutation.</i></p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const formatUser = user => {
+  // mutated in place
+  user.name = user.name.first + user.name.last
+  user.birthday = user.birthday.month + '/' + user.birthday.day
+  return user
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Let's return a new object instead.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+
+// const formatUser = user => {
+//   user.name = user.name.first + user.name.last
+//   user.birthday = user.birthday.month + '/' + user.birthday.day
+//   return user
+// }
+
+const formatUser = user => {
+  return {
+    name: user.name.first + user.name.last,
+    birthday: user.birthday.month + '/' + user.birthday.day,
   }
-
+}
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Currying">Function Currying</a></h2>
-                    <p><strong>Example:</strong> handling CRM search response</p>
+                    <h2>Functional Programming</h2>
+                    <p>And now it works:</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  case defs.SEARCH_USER_SUCCESS_WITH_CHARGE:
-    return pipe([
-      mutate.setFetchingUser(false),
-      mutate.setUser(action.user),
-      mutate.setSidebarView({
-        key: 'loan-details',
-        props: { loanAri: action.charge },
-      }),
-      mutate.setSidebarOpen,
-    ], state)
+                      <code data-trim data-noescape class="language-js">
+const today = new Date()
+
+isBirthday(me, today) // false
+
+formatUser(me) // {name: 'Chet Corcos', birthday: '12/18'}
+
+isBirthday(me, today) // false
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
-                    <p><strong>What:</strong></p>
+                    <h2>Functional Programming</h2>
+                    <p><strong>Lesson 1:</strong> do not mutate data in-place</p>
                     <ul>
-                      <li>a pure function returns the same output for the same input</li>
-                      <li>data should never be mutated "in-place" (with the same reference pointer)</li>
-                    </ul>
-                    <img src="https://drboolean.gitbooks.io/mostly-adequate-guide/content/images/function-sets.gif" alt="pure-function">
-                  </section>
-                  <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
-                    <p><strong>Why:</strong></p>
-                    <ul>
-                      <li>easier to understand</li>
-                      <li>easier to statically analyze</li>
-                      <li>easier to mathematically analyze</li>
+                      <li>immutable data is easier to <i>understand</i></li>
+                      <li>immutable data is easier to <i>predict</i></li>
+                      <li>immutable data is easier to <i>statically analyze</i></li>
                     </ul>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
-                    <p><strong>Example:</strong></p>
+                    <h2>Functional Programming</h2>
+                    <p>Suppose we have some data that looks like this:</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  var xs = [1, 2, 3, 4, 5]
-
-  // pure
-  xs.slice(0, 3)
-  //=> [1, 2, 3]
-
-  xs.slice(0, 3)
-  //=> [1, 2, 3]
-
-  xs.slice(0, 3)
-  //=> [1, 2, 3]
+                      <code data-trim data-noescape class="language-js">
+const loans = [
+  {status: 'due', amount: 10},
+  {status: 'overdue', amount: 20},
+  {status: 'overdue', amount: 30},
+]
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Pure_function">Purity</a> and <a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
-                    <p><strong>Counter-example:</strong></p>
+                    <h2>Functional Programming</h2>
+                    <p>Maybe we want to find the total overdue amount:</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  var xs = [1, 2, 3, 4, 5]
+                      <code data-trim data-noescape class="language-js">
+// const loans = [
+//   {status: 'due', amount: 10},
+//   {status: 'overdue', amount: 20},
+//   {status: 'overdue', amount: 30},
+// ]
 
-  // impure
-  xs.splice(0, 3)
-  //=> [1, 2, 3]
-
-  xs.splice(0, 3)
-  //=> [4, 5]
-
-  xs.splice(0, 3)
-  //=> []
+const getTotalOverdueAmount = loans => {
+  let total = 0
+  for (let i = 0; i < loans.length; i++) {
+    if (loans[i].status === 'overdue') {
+      total += loans[i].amount
+    }
+  }
+  return total
+}
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
-                    <p><strong>Problems:</strong></p>
-                    <ul>
-                      <li>cloning objects is inefficient</li>
-                      <li><a href="https://en.wikipedia.org/wiki/Thrashing_(computer_science)">garbage thrashing</a></li>
-                    </ul>
-                  </section>
-                  <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Immutable_object">Immutablility</a></h2>
-                    <p><strong>Solutions:</strong></p>
-                    <ul>
-                      <li><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">persistent data structures</a></li>
-                    </ul>
-                  </section>
-                  <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
-                    <p><strong>Example:</strong> a <a href="https://en.wikipedia.org/wiki/Linked_list">linked-list</a>!</p>
+                    <h2>Functional Programming</h2>
+                    <p>And it works:</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  const append = value => list => ({
-    value,
-    next: list
+                      <code data-trim data-noescape class="language-js">
+// const loans = [
+//   {status: 'due', amount: 10},
+//   {status: 'overdue', amount: 20},
+//   {status: 'overdue', amount: 30},
+// ]
+
+getTotalOverdueAmount(loans) // 50
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Now there's a new requirement and we want to exclude disputed loans from the calculation.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const loans = [
+  {status: 'due', amount: 10, disputed: false},
+  {status: 'overdue', amount: 20, disputed: true},
+  {status: 'overdue', amount: 30, disputed: false},
+]
+
+const getTotalOverdueAmount = loans => {
+  let total = 0
+  for (let i = 0; i < loans.length; i++) {
+    if (loans[i].status === 'overdue') {
+      // add a new condition
+      if (!loans[i].disputed) {
+        total += loans[i].amount
+      }
+    }
+  }
+  return total
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>And this works too:</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// const loans = [
+//   {status: 'due', amount: 10, disputed: false},
+//   {status: 'overdue', amount: 20, disputed: true},
+//   {status: 'overdue', amount: 30, disputed: false},
+// ]
+
+getTotalOverdueAmount(loans) // 30
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>So what's wrong with this code?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const getTotalOverdueAmount = loans => {
+  let total = 0
+  for (let i = 0; i < loans.length; i++) {
+    if (loans[i].status === 'overdue') {
+      if (!loans[i].disputed) {
+        total += loans[i].amount
+      }
+    }
+  }
+  return total
+}
+                      </code>
+                    </pre>
+                    <ul class="fragment">
+                      <li>Hard to read!</li>
+                      <li>Harder to read and understand with more requirements.</li>
+                      <li>This code isn't <i>declarative</i>.</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>What is <i>declarative</i> programming?</p>
+                    <p class="fragment">Say what you want, not how you want it done.</p>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Let's rewrite this code to be <i>more</i> declarative.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// const getTotalOverdueAmount = loans => {
+//   let total = 0
+//   for (let i = 0; i < loans.length; i++) {
+//     if (loans[i].status === 'overdue') {
+//       total += loans[i].amount
+//     }
+//   }
+//   return total
+// }
+
+const getTotalOverdueAmount = loans => {
+  const overdueLoans = loans.filter(loan => loan.status === 'overdue')
+  const totalAmount = overdueLoans.reduce((total, loan) => total + loan.amount, 0)
+  return totalAmount
+}
+                      </code>
+                    </pre>
+                    <p class="fragment">We didn't say how to iterate over the list...</p>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>... but we can do even better.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// const getTotalOverdueAmount = loans => {
+//   const overdueLoans = loans.filter(loan => loan.status === 'overdue')
+//   const totalAmount = overdueLoans.reduce((total, loan) => total + loan.amount, 0)
+//   return totalAmount
+// }
+
+const sum = (a, b) => a + b
+
+const propEq = (prop, value) => obj => obj[prop] === value <span class="fragment">// a curried function!</span>
+
+const getTotalOverdueAmount = loans => {
+  const overdueLoans = loans.filter(propEq('status', 'overdue'))
+  const totalAmount = overdueLoans.reduce(sum, 0)
+  return totalAmount
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>A curried funtion takes its argument's one at a time.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const propEq = prop => value => obj => obj[prop] === value
+
+const isOverdue = propEq('status')('overdue')
+// obj => obj['status'] === 'overdue'
+
+const overdueLoans = loans.filter(isOverdue)
+                      </code>
+                    </pre>
+                    <div class="fragment">
+                      <p>But some syntactic sugar is OK.</p>
+                      <pre>
+                        <code data-trim data-noescape class="language-js">
+const propEq = (prop, value) => obj => obj[prop] === value
+
+const isOverdue = propEq('status', 'overdue')
+                        </code>
+                      </pre>
+                    </div>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Now let's filter disputed loans as well.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// const getTotalOverdueAmount = loans => {
+//   const overdueLoans = loans.filter(propEq('status', 'overdue'))
+//   const totalAmount = overdueLoans.reduce(sum, 0)
+//   return totalAmount
+// }
+
+const getTotalOverdueAmount = loans => {
+  const overdueLoans = loans.filter(propEq('status', 'overdue'))
+  // create a new variable
+  const notDiputed = overdueLoans.filter(propEq('disputed', false))
+  // filter with the new variable
+  const totalAmount = notDiputed.reduce(sum, 0)
+  return totalAmount
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>We can still do even better.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// const getTotalOverdueAmount = loans => {
+//   const overdueLoans = loans.filter(propEq('status', 'overdue'))
+//   const notDiputed = overdueLoans.filter(propEq('disputed', false))
+//   const totalAmount = notDiputed.reduce(sum, 0)
+//   return totalAmount
+// }
+
+const filter = fn => list => list.filter(fn)
+
+const reduce = (fn, init) => list => list.reduce(fn, init)
+
+const pipe = fnList => value => fnList.reduce((acc, fn) => fn(acc), value)
+
+const getTotalOverdueAmount = pipe([ <span class="fragment">// a point-free function!</span>
+  filter(propEq('status', 'overdue')),
+  filter(propEq('disputed', false)),
+  reduce(sum, 0),
+])
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>What is a point-free function?</p>
+                    <p>"Point-free programming (a.k.a tacit programming) is when a function never identifies its arguments (points) and is intead a specified as composition of other functions."</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const getTotalOverdueAmount = pipe([
+  filter(propEq('status', 'overdue')),
+  filter(propEq('disputed', false)),
+  reduce(sum, 0),
+])
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Now our code is declarative, but is it <i>performant</i>?</p>
+                    <p>How many times are we iterating through the list?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const getTotalOverdueAmount = pipe([
+  filter(propEq('status', 'overdue')), // one
+  filter(propEq('disputed', false)),   // two
+  reduce(sum, 0),                      // three times!
+])
+                      </code>
+                    </pre>
+                    <p class="fragment">I guess declarative programming sucks... <span class="fragment">Except it doesn't!</span></p>
+                    <p class="fragment">We can use <i>generators</i>!</p>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>What's a <i>generator</i>?</p>
+                    <p>A generator is a function that yields values.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+function *Counter() {
+  let id = 0
+  while(true) {
+    yield id++
+  }
+}
+
+const counter = new Counter()
+counter.next() // {value: 1, done: false}
+counter.next() // {value: 2, done: false}
+counter.next() // {value: 3, done: false}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Why do we use generators?</p>
+                    <p>Generators help us iterate <i>lazily</i> over lists.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const list = [1, 2, 3]
+
+const ListGenerator = new list[Symbol.iterator]
+
+// WARNING: generators are stateful!
+const generator = new ListGenerator()
+
+generator.next() // {value: 1, done: false}
+generator.next() // {value: 2, done: false}
+generator.next() // {value: 3, done: false}
+generator.next() // {value: undefined, done: true}
+
+[...ListGenerator] // [1, 2, 3]
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Let's make a lazy filter!</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const lazyFilter = fn => function*(Generator) {
+  const generator = new Generator()
+  while(true) {
+    const result = generator.next()
+    if (result.done) {
+      break
+    }
+    if (fn(result.value)) {
+      yield result.value
+    }
+  }
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Let's make a lazy reduce!</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const lazyReduce = (fn, init) => function*(Generator) {
+  const generator = new Generator()
+  let acc = init
+  while(true) {
+    const result = generator.next()
+    if (result.done) {
+      break
+    }
+    acc = fn(acc, result.value)
+    yield acc
+  }
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Let's make a lazy pipe!</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const lazyPipe = fnList => iterable => {
+  const InputGenerator = new iterable[Symbol.iterable]()
+  const OutputGenerator = fnList.reduce((gen, fn) => fn(gen), InputGenerator)
+  return [...OutputGenerator]
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>And now we're declarative and performant!</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// const getTotalOverdueAmount = pipe([
+//   filter(propEq('status', 'overdue')),
+//   filter(propEq('disputed', false)),
+//   reduce(sum, 0),
+// ])
+
+const getTotalOverdueAmount = lazyPipe([
+  lazyFilter(propEq('status', 'overdue')),
+  lazyFilter(propEq('disputed', false)),
+  lazyReduce(sum, 0),
+])
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Now suppose we're manipulating a large amount of data.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const actions = [
+  {type: 'click-make-payment', loanAri: 'JJR5-0PLM'},
+  {type: 'change-payment-method', instrumentAri: 'AF3S-353H'},
+  {type: 'change-amount', value: 'upcoming-count'},
+  {type: 'submit-make-payment'}
+  // many many more...
+]
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>What happens when we want to append an action to this array?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const appendAction = (action) => {
+  actions.push(action) <span class="fragment">// NO! That's impure!</span>
+}
+                       </code>
+                      <code data-trim data-noescape class="language-js fragment">
+const appendAction = (actions, action) => {
+  actions.push(action) <span class="fragment">// NO! That's in-place mutation!</span>
+  return actions
+}
+                       </code>
+                       <code data-trim data-noescape class="language-js fragment">
+const appendAction = (actions, action) => {
+  return [...actions, action] <span class="fragment">// Much better...</span><span class="fragment"> but is it performant?</span>
+}
+                        </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>Why immutability not performant?</p>
+                    <ul>
+                      <li>must clone the array just to append an item</li>
+                      <li>lots of memory for the garbage collector to clean up</li>
+                      <ul><li>aka <a href="https://en.wikipedia.org/wiki/Thrashing_(computer_science)">garbage thrashing</a></li></ul>
+                    </ul>
+                    <pre>
+                       <code data-trim data-noescape class="language-js">
+const appendAction = (actions, action) => {
+  return [...actions, action]
+}
+                        </code>
+                    </pre>
+                    <p class="fragment">I guess immutability sucks... <span class="fragment">Except it doesn't!</span></p>
+                    <p class="fragment">We can use <i>persistent data structures</i>!</p>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>What are <i>persistent data structures</i>?</p>
+                    <p>Data structures that preseve the previous version of itself when its modified... like a linked-list!</p>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>What is a <i>linked list</i>?</p>
+                    <p class="fragment">... just kidding</p>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>How do we use <i>persistent data structures</i> without hating our lives?</p>
+                    <div class="fragment">
+                      <p>ImmutableJS to the rescue!</p>
+                      <pre>
+                        <code data-trim data-noescape class="language-js">
+  import { List } from 'immutable'
+
+  const actions = new List([
+    {type: 'click-make-payment', loanAri: 'JJR5-0PLM'},
+    {type: 'change-payment-method', instrumentAri: 'AF3S-353H'},
+    {type: 'change-amount', value: 'upcoming-count'},
+    {type: 'submit-make-payment'}
+    // many many more...
+  ])
+
+  const trackAction = (actions, action) => {
+    return actions.push(action)
+  }
+                        </code>
+                      </pre>
+                    </div>
+                  </section>
+                  <section>
+                    <h2>Functional Programming</h2>
+                    <p>ImmutableJS has all kinds of persistent data structures.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+import { Map } from 'immutable'
+
+const me = new Map({
+  name: new Map({
+    first: 'Chet',
+    last: 'Corcos',
+  }),
+  birthday: new Map({
+    month: 12,
+    day: 28,
   })
+})
 
-  const list1 = {value: 1, next: undefined}
-  const list2 = append(2)(list1)
-
-  // "persisted" the previous data structure
-  list2.next === list1 // true
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://facebook.github.io/immutable-js/">ImmutableJS</a></h2>
-                    <p><strong>What:</strong></p>
-                    <ul>
-                      <li>persistent data structures library for JavaScript</li>
-                      <li>developed by Facebook</li>
-                    </ul>
-                  </section>
-                  <section>
-                    <h2><a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Persistent Data Structures</a></h2>
-                    <p><strong>Example:</strong> an <a href="https://facebook.github.io/immutable-js/">ImmutableJS</a> Map</p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  import { Map } from 'immutable'
-
-  const person = new Map({
-    name: 'chet',
-    age: 25,
-    profile: new Map({
-      homepage: 'https://chetcorcos.com'
-    })
-  })
-
-  // immutably update the person's age
-  const updatedPerson = person.update('age', x => x + 1)
-  person.get('age') // 25
-  updatedPerson.get('age') // 26
-
-  // verify that the rest of the data structure was persisted
-  person.get('profile') === updatedPerson.get('profile') // true
+me.getIn(['name', 'first']) // 'Chet'
                       </code>
                     </pre>
                   </section>
@@ -244,377 +702,364 @@
                 <section>
                   <section>
                     <h2>Build Tools</h2>
-                    <ul>
-                      <li><a href="https://en.wikipedia.org/wiki/Source-to-source_compiler">transpilers</a></li>
-                      <li><a href="https://en.wikipedia.org/wiki/Lint_(software)">linters</a></li>
-                      <li><a href="https://en.wikipedia.org/wiki/Type_system#Static_type_checking">static type checkers</a></li>
-                      <li>module bundlers</li>
-                    </ul>
                   </section>
                   <section>
-                    <h2><a href="https://babeljs.io/">Babel</a></h2>
-                    <p><i>"Use next generation JavaScript, today."</i></p>
+                    <h2>Build Tools</h2>
+                    <p>Why do we need build tools for the web?</p>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p><strong>Reason 1:</strong> better code reusability</p>
+                    <p>Here's an example of the old school way to build websites.</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  // ES6 before
-  [1,2,3].map(n => n + 1);
-
-  // ES5 after
-  [1,2,3].map(function(n) {
-    return n + 1;
-  });
+                      <code data-trim data-noescape class="language-html">
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script src="jquery.js"&gt;&lt;/script&gt;
+    &lt;script src="date-picker.js"&gt;&lt;/script&gt;
+    &lt;script src="facebook-like-button.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="date-picker"&gt;&lt;/div&gt;
+    &lt;div id="like-button"&gt;&lt;/div&gt;
+    &lt;script&gt;
+      window.DatePicker('date-picker')
+      window.LikeButton('like-button')
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+                      </code>
+                    </pre>
+                    <p class="fragment">Right, Libor?</p>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p>The biggest problem is that we have a global namespace</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-html">
+&lt;script&gt;
+  window.DatePicker('date-picker')
+  window.LikeButton('like-button')
+&lt;/script&gt;
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://babeljs.io/">Babel</a></h2>
-                    <p>Some new JavaScript standards:</p>
+                    <h2>Build Tools</h2>
+                    <p>What if our components depend on different versions of jQuery?</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  const f = (a, b, ...args) => {}
-
-  const min = Math.min(...list)
-
-  const object = {
-    ...other,
-    key: 'value',
-  }
-
-  const str = `string ${object.value} interpolation`
-
-  const fetchUsers = async userAri => fetch(`/api/users/${userAri}`)
-  const response = await fetchUsers('1234')
+                      <code data-trim data-noescape class="language-html">
+&lt;script src="jquery.js"&gt;&lt;/script&gt;
+&lt;script src="date-picker.js"&gt;&lt;/script&gt;
+&lt;script src="facebook-like-button.js"&gt;&lt;/script&gt;
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
-                    <p><i>"Use tomorrow's CSS syntax, today."</i></p>
+                    <h2>Build Tools</h2>
+                    <p><strong>Solution 1:</strong> let's use modules!</p>
                     <pre>
-                      <code data-noescape class="language-css">
-  /* before */
-  :root {
-    --red: #d33;
-  }
-  a {
-    &:hover {
-      color: color(var(--red) alpha(54%));
-    }
-  }
+                      <code data-trim data-noescape class="language-js">
+const LikeButton = require('like-button')
+const DatePicker = require('date-picker')
 
-  /* after */
-  a:hover {
-    color: #dd3333;
-    color: rgba(221, 51, 51, 0.54);
-  }
+DatePicker('date-picker')
+LikeButton('like-button')
                       </code>
+                    </pre>
+                    <p class="fragment">This is why we should be using <a href="https://www.npmjs.com/">NPM</a> instead of <a href="https://bower.io/">Bower</a></p>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p>... but it doesnt work</p>
+                    <pre style="color:red; background-color: #eee; padding: 10px; padding-top: 25px; text-align: center;">
+Uncaught ReferenceError: require is not defined
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
-                    <p>Some new CSS standards:</p>
-                    <pre>
-                      <code data-noescape class="language-css">
-  :root {
-    --text: #FFFFFF;
-    --primary: #123ABC;
-  }
-  nav {
-    background-color: var(--primary);
-    &:hover {
-      background-color: color(var(--primary) alpha(10%));
-    }
-    & h1 {
-      color: var(--text);
-    }
-    @nest .dark-theme & {
-      background-color: color(var(--primary) blackness(20%));
-      &:hover {
-        background-color: color(var(--primary)  blackness(20%) alpha(10%));
-      }
-    }
-  }
-                      </code>
-                    </pre>
+                    <h2>Build Tools</h2>
+                    <p>That's why we have module bundlers.</p>
+                    <img src="https://webpack.github.io/assets/what-is-webpack.png" alt="what-is-webpack" height="50%">
+                    <p class="fragment">There are lots of module bundlers but Webpack is the best!</p>
                   </section>
                   <section>
-                    <h2><a href="http://postcss.org/">PostCSS</a> + <a href="http://cssnext.io/">CSSNext</a></h2>
-                    <p><a href="https://github.com/postcss/autoprefixer">Autoprefix</a> with <a href="http://caniuse.com/"><i>Can I Use</i></a></p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  postcss: function(webpack) {
-    return [
-      require('postcss-cssnext')({
-        browser: '> 1%, last 2 versions, Firefox ESR, Opera 12.1',
-      }),
-    ]
-  }
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="http://eslint.org/">ESLint</a></h2>
-                    <p><i>"The pluggable linting utility for JavaScript"</i></p>
-                    <ul>
-                      <li>enforce code conventions</li>
-                      <li>find simple bugs</li>
-                    </ul>
-                  </section>
-                  <section>
-                    <h2><a href="http://eslint.org/">ESLint</a></h2>
-                    <p><i>"The pluggable linting utility for JavaScript"</i></p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  const person = {
-    name: 'chet',
-    age: 25 // error Missing trailing comma.  comma-dangle
-  }
-
-  const inc = x => x + 1
-  inc(a) // error  "a" is not defined  no-undef
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://github.com/stylelint/stylelint">Stylelint</a></h2>
-                    <p><i>"A mighty, modern CSS linter that helps you enforce consistent conventions and avoid errors in your stylesheets."</i></p>
-                  </section>
-                  <section>
-                    <h2><a href="https://flowtype.org/">FlowType</a></h2>
-                    <p><i>"A static type checker for JavaScript"</i></p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  // @flow
-  function foo(x) {
-    return x * 10;
-  }
-  foo('Hello, world!');
-
-  //  5: foo('Hello, world!');
-  //     ^^^^^^^^^^^^^^^^^^^^ function call
-  //  3:   return x * 10;
-  //              ^ string. This type is incompatible with
-  //  3:   return x * 10;
-  //              ^^^^^^ number
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://flowtype.org/">FlowType</a></h2>
-                    <p><i>"A static type checker for JavaScript"</i></p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  // @flow
-  type Status = 'active' | 'inactive'
-
-  type Person = {
-    age: number,
-    name?: string,
-    status: Status,
-  }
-
-  const nextYear = (person : Person) : Person => ({
-    ...person,
-    age: person.age + 1
-  })
-
-  const next = nextYear({
-    age: 25,
-    status: 'active',
-  })
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><i>"Module Bundler"</i></p>
-                    <img src="https://webpack.github.io/assets/what-is-webpack.png" alt="what-is-webpack">
-                  </section>
-                  <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong>Concept:</strong></p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  // before
-  import SomeModule from 'path/to/some/module'
-  import OtherModule from 'path/to/other/module'
-  SomeModule.doSomething()
-  OtherModule.doSomething()
-
-  // after
-  modules = {
-    'path/to/some/module': memoize(function() {
-      // "some module" source code
-    }),
-    'path/to/other/module': memoize(function() {
-      // "other module" source code
-    })
-  }
-  modules['path/to/some/module']().doSomething()
-  modules['path/to/other/module']().doSomething()
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong>Notable features:</strong></p>
+                    <h2>Build Tools</h2>
+                    <p>Why is Webpack the best?</p>
                     <ul>
                       <li><a href="https://webpack.github.io/docs/loaders.html">asset loaders</a></li>
-                      <li>modular components</li>
                       <li><a href="https://webpack.github.io/docs/list-of-plugins.html#defineplugin">compile-time feature flags</a></li>
                       <li><a href="https://webpack.github.io/docs/hot-module-replacement.html">hot-module replacement</a></li>
                       <li><a href="https://webpack.github.io/docs/multiple-entry-points.html">code splitting</a></li>
                       <li><a href="https://webpack.github.io/docs/code-splitting.html">async module loading</a></li>
-                      <li><a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">tree shaking</a></li>
+                    </ul>
+                    <p class="fragment">... but we'll touch on this later if we have time.</p>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p><strong>Reason 2:</strong> so we can use new language features.</p>
+                    <p class="fragment">... and still support older browsers.</p>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p>There are new JavaScript features</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// old school JavaScript
+function variadicFunction() {
+  var args = Array.prototype.slice.call(arguments) <span class="fragment">// very ouch</span>
+  // ...
+}
+
+// new school JavaScript
+function variadicFunction(...args) {
+  // ...
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p>There are new CSS features</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-css">
+/* old school CSS */
+.grid {
+  margin: -10px;
+}
+
+.grid .grid-item {
+  margin: 10px;
+}
+
+/* new school CSS */
+:root {
+  --grid-padding: 10px;
+}
+
+.grid {
+  margin: var(--grid-padding);
+
+  &amp; .grid-item {
+    margin: var(--grid-padding);
+  }
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p><i>Transpilers</i> let us compile our new code into old code.</p>
+                    <ul>
+                      <li><a href="https://babeljs.io/">Babel</a> &mdash; JavaScript</li>
+                      <li><a href="http://postcss.org/">PostCSS</a> &mdash; CSS</li>
                     </ul>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="https://webpack.github.io/docs/loaders.html">Asset Loaders</a>:</strong> manage all assets through JavaScript</p>
+                    <h2>Build Tools</h2>
+                    <p><strong>Reason 3:</strong> find bugs and enforce best practices.</p>
+                    <ul class="fragment">
+                      <li>Linters &mdash; <a href="http://eslint.org/">ESLint</a> and <a href="http://stylelint.io/">Stylelint</a></li>
+                      <li>Static Type Checkers &mdash; <a href="https://flowtype.org/">FlowType</a></li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p>How do does <a href="http://eslint.org/">ESLint</a> help?</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  webpackConfig = {
-    loaders: [
-      {
-        test: /\.js$/,
-        loader: ['babel'],
-      },
-      {
-        test: /\.css$/,
-        loader: ['style', 'css', 'postcss'],
-      },
-    ]
-  }
+                      <code data-trim data-noescape class="language-js">
+const inc = x => x + 1
+inc(a) // error  "a" is not defined  no-undef
+
+const person = {
+  name: 'chet',
+  age: 25 // error Missing trailing comma.  comma-dangle
+}
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong>Modularized Components:</strong> components that import their own CSS</p>
+                    <h2>Build Tools</h2>
+                    <p>How does <a href="http://stylelint.io/">Stylelint</a> help?</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  import React from 'react'
-  import 'affirm/badge/style.css'
+                      <code data-trim data-noescape class="language-css">
+.btn {
+  border-radus: 5px; /* Unexpected unknown property "border-radus"   property-no-unknown */
+}
+                      </code>
+                    </pre>
+                  </section>
 
-  const Badge = (props) =>
-    &lt;div className="badge"&gt;
-      {props.children}
-    &lt;/div&gt;
+                  <section>
+                    <h2>Build Tools</h2>
+                    <p>How does <a href="https://flowtype.org/">FlowType</a> help?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+// @flow
+function foo(x) {
+  return x * 10;
+}
+foo('Hello, world!');
 
-  export default Badge
+//  5: foo('Hello, world!');
+//     ^^^^^^^^^^^^^^^^^^^^ function call
+//  3:   return x * 10;
+//              ^ string. This type is incompatible with
+//  3:   return x * 10;
+//              ^^^^^^ number
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="https://webpack.github.io/docs/list-of-plugins.html#defineplugin">Feature Flags</a>:</strong> enable/disable development tools at compile-time</p>
+                    <h2>Build Tools</h2>
+                    <p>How does <a href="https://flowtype.org/">FlowType</a> help?</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  if (process.env.NODE_ENV === 'development') {
-    const devtool = require('redux-devtool')
-    devtool.configure()
-  }
-  if (process.env.NODE_ENV === 'production') {
-    tracking.start()
-  }
+                      <code data-trim data-noescape class="language-js">
+// @flow
+type Status = 'active' | 'inactive'
+
+type Person = {
+  age: number,
+  name?: string,
+  status: Status,
+}
+
+const incAge = (person : Person) : Person => ({
+  ...person,
+  age: person.age + 1
+})
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="https://webpack.github.io/docs/hot-module-replacement.html">Hot Module Replacement</a>:</strong> blazingly fast rebuilds</p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  const callback = event =>
-    console.log(event)
-
-  window.events.subscribe(callback)
-
-  if (module.hot) {
-    module.hot.accept()
-    module.hot.dispose(() => {
-      // cleanup any statefulness
-      window.events.unsubscribe(callback)
-    })
-  }
-                      </code>
-                    </pre>
+                    <h2>Appendix: Webpack</h2>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="https://webpack.github.io/docs/multiple-entry-points.html">Code Splitting</a>:</strong> break up application into mutliple entry points</p>
+                    <h2>Appendix: Webpack</h2>
+                    <p><a href="https://webpack.github.io/docs/loaders.html">Asset Loaders</a> let you manage all assets through JavaScript...</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  module.exports = {
-    entry: {
-      portal: "./src/portal.js",
-      login: "./src/login.js",
+                      <code data-trim data-noescape class="language-js">
+webpackConfig = {
+  loaders: [
+    {
+      test: /\.js$/,
+      loader: ['babel'],
     },
-    output: {
-      filename: "[name]-[hash].js",
+    {
+      test: /\.css$/,
+      loader: ['style', 'css', 'postcss'],
     },
-    plugins: [
-      new webpack.optimize.CommonsChunkPlugin("common-[hash].js"),
-    ],
-  }
+  ]
+}
                       </code>
                     </pre>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="">Common Chunking</a>:</strong> reuse common code for each entry point</p>
+                    <h2>Appendix: Webpack</h2>
+                    <p>... so you can import CSS to create modular components.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+import React from 'react'
+import 'affirm/badge/style.css'
+
+const Badge = (props) =>
+  &lt;div className="badge"&gt;
+    {props.children}
+  &lt;/div&gt;
+
+export default Badge
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Appendix: Webpack</h2>
+                    <p><a href="https://webpack.github.io/docs/list-of-plugins.html#defineplugin">Feature Flags</a> lets you enable / disable development tools at compile-time.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+if (process.env.NODE_ENV === 'development') {
+  const devtool = require('redux-devtool')
+  devtool.configure()
+}
+if (process.env.NODE_ENV === 'production') {
+  tracking.start()
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Appendix: Webpack</h2>
+                    <p><a href="https://webpack.github.io/docs/hot-module-replacement.html">Hot Module Replacement</a> gives you blazingly fast rebuilds without having to refresh the browser.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const callback = event =>
+  console.log(event)
+
+window.events.subscribe(callback)
+
+if (module.hot) {
+  module.hot.accept()
+  module.hot.dispose(() => {
+    // cleanup any statefulness
+    window.events.unsubscribe(callback)
+  })
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Appendix: Webpack</h2>
+                    <p><a href="https://webpack.github.io/docs/multiple-entry-points.html">Code Splitting</a> let's you break up your application into mutliple entry points.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+module.exports = {
+  entry: {
+    portal: "./src/portal.js",
+    login: "./src/login.js",
+  },
+  output: {
+    filename: "[name]-[hash].js",
+  },
+  plugins: [
+    // and you can create a file with all the common code
+    new webpack.optimize.CommonsChunkPlugin("common-[hash].js"),
+  ],
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2>Appendix: Webpack</h2>
+                    <p>Here's how you might use it.</p>
                     <pre>
                       <code data-noescape class="language-html">
-  &lt;!-- portal.html --&gt;
-  &lt;script src='portal-1ed1x3232w.js'&gt;
-  &lt;script src='common-djs39dn39s.js'&gt;
+&lt;!-- portal.html --&gt;
+&lt;script src='portal-1ed1x3232w.js'&gt;
+&lt;script src='common-djs39dn39s.js'&gt;
 
-  &lt;!-- login.html --&gt;
-  &lt;script src='login-sufnew3if8.js'&gt;
-  &lt;script src='common-djs39dn39s.js'&gt;
+&lt;!-- login.html --&gt;
+&lt;script src='login-sufnew3if8.js'&gt;
+&lt;script src='common-djs39dn39s.js'&gt;
                       </code>
                     </pre>
+                    <p class="fragment">But that's for the old school web!</p>
                   </section>
                   <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="https://webpack.github.io/docs/code-splitting.html">Async Module Loading</a>:</strong> fetch source code on-demand</p>
+                    <h2>Appendix: Webpack</h2>
+                    <p><a href="https://webpack.github.io/docs/code-splitting.html">Async Module Loading</a> let's you fetch source code on-demand.</p>
                     <pre>
-                      <code data-noescape class="language-js">
-  // routes.js
+                      <code data-trim data-noescape class="language-js">
+// routes.js
 
-  page('/login', async () => {
-    render(&lt;Loading/&gt;)
-    const Login = await System.load('./src/login')
-    render(&lt;Login/&gt;)
-  })
+page('/login', async () => {
+  render(&lt;Loading/&gt;)
+  const Login = await System.load('./src/login')
+  render(&lt;Login/&gt;)
+})
 
-  page('/portal', async () => {
-    render(&lt;Loading/&gt;)
-    const Portal = await System.load('./src/portal')
-    render(&lt;Portal/&gt;)
-  })
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://webpack.github.io/">Webpack</a></h2>
-                    <p><strong><a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">Tree Shaking</a>:</strong> elminate unused codepaths</p>
-                    <pre>
-                      <code data-noescape class="language-js">
-  // before
-  function add(a, b) {
-    return a + b
-  }
-  function subtract(a, b) {
-    return a - b
-  }
-  subtract(2, 1)
-
-  // after
-  function subtract(a, b) {
-    return a - b
-  }
-  subtract(2, 1)
+page('/portal', async () => {
+  render(&lt;Loading/&gt;)
+  const Portal = await System.load('./src/portal')
+  render(&lt;Portal/&gt;)
+})
                       </code>
                     </pre>
                   </section>
@@ -638,7 +1083,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong>Example</strong>: Hello World</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   import React from 'react'
   import ReactDOM from 'react-dom'
 
@@ -656,7 +1101,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong>Example:</strong> Hello {name}</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   import React from 'react'
   import ReactDOM from 'react-dom'
 
@@ -674,7 +1119,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a>:</strong> HTML-flavored JavaScript</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   // before
   const App = (props) =>
     &lt;div className="app"&gt;
@@ -695,7 +1140,7 @@
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
                     <p><strong>Example:</strong> iOS renderer example</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   import React from 'react'
   import { AppRegistry } from 'react-native'
   import View1 from './src/view1'
@@ -729,7 +1174,7 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Concept:</strong></p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   import { createStore } from 'redux'
 
   const initialState = { count: 0 }
@@ -755,7 +1200,7 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Example:</strong> Vanilla JS</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   store.subscribe(state => {
     const root = document.getElementById('root')
     root.innerHTML = `
@@ -775,7 +1220,7 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Example:</strong> React</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   import { connect } from 'react-redux'
 
   const CounterView = (props) =>
@@ -800,7 +1245,7 @@
                     <h2><a href="redux.js.org">Redux</a></h2>
                     <p><strong>Middleware:</strong> get inbetween dispatch and the reducer</p>
                     <pre>
-                      <code data-noescape class="language-js">
+                      <code data-trim data-noescape class="language-js">
   import track from 'shared/src/scripts/analytics/tracking'
 
   const middleware = store => next => action => {
@@ -845,7 +1290,7 @@
                   <h2>Example</h2>
                   <p><strong>Import React and the CSS file</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
 
   // affirm/progress/index.js
 
@@ -859,7 +1304,7 @@
                   <h2>Example</h2>
                   <p><strong>Build the component</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
 
   // affirm/progress/index.js
 
@@ -879,7 +1324,7 @@
                   <h2>Example</h2>
                   <p><strong>Define the component's propTypes</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
 
   // affirm/progress/index.js
 
@@ -957,7 +1402,7 @@
                   <h2>Example</h2>
                   <p><strong>Create a guide in the Styleguide</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   import React from 'react'
   import Guide from 'styleguide/src/guide'
   import Progress from 'affirm/progress'
@@ -1002,7 +1447,7 @@
                   <h2>Example</h2>
                   <p><strong>Create a mock endpoint</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/server.js
 
   app.post('/decrement', function(request, response) {
@@ -1020,7 +1465,7 @@
                   <h2>Example</h2>
                   <p><strong>Create a client side function to make the HTTP request</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/api.js
 
   export async function decrement(count) {
@@ -1040,7 +1485,7 @@
                   <h2>Example</h2>
                   <p><strong>Define some action types</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/defs.js
 
   export const INCREMENT = 'counter/increment'
@@ -1054,7 +1499,7 @@
                   <h2>Example</h2>
                   <p><strong>Define the synchronous actions creators</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/actions/sync.js
 
   export const increment = () => ({
@@ -1080,7 +1525,7 @@
                   <h2>Example</h2>
                   <p><strong>Define the async action creators</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/actions/async.js
 
   export function decrement(count) {
@@ -1103,7 +1548,7 @@
                   <h2>Example</h2>
                   <p><strong>Define the initial state</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/reducer/index.js
 
   const initialState = Immutable.Map({
@@ -1121,7 +1566,7 @@
                   <h2>Example</h2>
                   <p><strong>Define the state mutators</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/reducer/mutators.js
 
   export const increment = state =>
@@ -1139,7 +1584,7 @@
                   <h2>Example</h2>
                   <p><strong>Define the state reducer</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/reducer/index.js
 
   const reducer = (state=initialState, action) => {
@@ -1167,7 +1612,7 @@
                   <h2>Example</h2>
                   <p><strong>Wire up the component</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/components/counter/index.js
 
   import React from 'react'
@@ -1189,7 +1634,7 @@
                   <h2>Example</h2>
                   <p><strong>Wire up the component</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   // app/src/components/counter/index.js
 
   // wire up the actions
@@ -1207,7 +1652,7 @@
                   <h2>Example</h2>
                   <p><strong>Use the component wherever you'd like</strong></p>
                   <pre>
-                    <code data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-js">
   import Counter from 'app/src/components/counter'
 
   // &lt;Counter/&gt;
@@ -1238,7 +1683,7 @@
                 { src: 'assets/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
                 { src: 'assets/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 
-                // Syntax highlight for <code data-noescape class="language-js"> elements
+                // Syntax highlight for <code data-trim data-noescape class="language-js"> elements
                 { src: 'assets/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 
                 // Zoom in and out with Alt+click
