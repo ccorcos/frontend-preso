@@ -1027,7 +1027,7 @@ module.exports = {
                     <h2>Appendix: Webpack</h2>
                     <p>Here's how you might use it.</p>
                     <pre>
-                      <code data-noescape class="language-html">
+                      <code data-trim data-noescape class="language-html">
 &lt;!-- portal.html --&gt;
 &lt;script src='portal-1ed1x3232w.js'&gt;
 &lt;script src='common-djs39dn39s.js'&gt;
@@ -1424,406 +1424,158 @@ const middleware = store => next => action => {
                   </section>
                 </section>
               </section>
-
               <section>
                 <section>
-                  <h2>Example</h2>
+                  <h2>Styleguide</h2>
+                </section>
+                <section>
+                  <h2>Styleguide</h2>
+                  <p>What is the Styleguide?</p>
                   <ul>
-                    <li>How to build a modular UI component?</li>
-                    <li>How to add the component to the Styleguide?</li>
-                    <li>How to wire up the component into an app?</li>
+                    <li>an application demonstrating UI components</li>
+                    <li>components are reusable and modular</li>
+                    <li>components are don't contain any business logic</li>
                   </ul>
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Lets build a "progress" component:</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>Demo</p>
+                  <img src="assets/styleguide.png" alt="styleguide">
+                </section>
+                <section>
+                  <h2>Styleguide</h2>
+                  <p>Why have <a href="#"></a> Styleguide?</p>
+                  <p>To create a cohesive and consistent user experience across all of our applications so that user's can come become comfortable and familiar with interacting with our products.</p>
+                  <br>
+                  <p class="fragment">Components are motivated by UX requirements not product requirements!</p>
+                  </ul>
+                </section>
+                <section>
+                  <h2>Styleguide</h2>
+                  <p>Lets build a "progress" component:</p>
                   <img src="assets/progress.png" alt="progress-example">
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Create the index.js and style.css files</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>First ask why!</p>
+                  <ul>
+                    <li>What intent is this component supposed to convey to the user?</li>
+                    <li>Is there an existing component that conveys the same intent?</li>
+                    <li><strong>Don't create a new component just because its in the product spec!</strong></li>
+                  </ul>
+                </section>
+                <section>
+                  <h2>Styleguide</h2>
+                  <p>Create the index.js and style.css files</p>
                   <img src="assets/file-structure.png" alt="file-structure">
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Import React and the CSS file</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>Build the component</p>
                   <pre>
                     <code data-trim data-noescape class="language-js">
+// affirm/progress/index.js
 
-  // affirm/progress/index.js
-
-  import React from 'react'
-  import 'affirm/progress/style.css'
+import React from 'react'
+import 'affirm/progress/style.css'
+<span class="fragment">
+const Progress = (props) => {
+  const width = `${props.percent}%`
+  return (
+    &lt;div className="progress-bar"&gt;
+      &lt;div className="progress-bar__fill" style={{ width }}/&gt;
+    &lt;/div&gt;
+  )
+}
+</span><span class="fragment">
+Progress.propTypes = {
+  percent: React.PropTypes.number.isRequired,
+}
+</span><span class="fragment">
+export default Progress
+</span>
 
                     </code>
                   </pre>
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Build the component</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>Style the component</p>
                   <pre>
-                    <code data-trim data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-css">
 
-  // affirm/progress/index.js
+/* affirm/progress/style.js */
 
-  const Progress = (props) => {
-    const width = `${props.percent}%`
-    return (
-      &lt;div className="progress-bar"&gt;
-        &lt;div className="progress-bar__fill" style={{ width }}/&gt;
-      &lt;/div&gt;
-    )
-  }
+@import 'affirm/styles/base';
+<span class="fragment">
+.progress-bar {
+  width: 100%;
+  height: var(--spacing-small);
+  border-radius: var(--border-radius);
+  background-color: var(--black-10);
+  margin-bottom: var(--spacing-large);
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background-color: var(--indigo);
+  border-radius: var(--border-radius);
+}
+</span>
 
                     </code>
                   </pre>
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Define the component's propTypes</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>Please use <a href="https://css-tricks.com/bem-101/">BEM CSS naming conventions</a>!</p>
                   <pre>
-                    <code data-trim data-noescape class="language-js">
+                    <code data-trim data-noescape class="language-css">
 
-  // affirm/progress/index.js
+/* Block component */
+.btn {}
 
-  Progress.propTypes = {
-    percent: React.PropTypes.number.isRequired,
-  }
+/* Element that depends upon the block */
+.btn__price {}
 
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Import the base CSS file</strong></p>
-                  <pre>
-                    <code data-noescape class="language-css">
-
-  /* affirm/progress/style.js */
-
-  @import 'affirm/styles/base';
+/* Modifier that changes the style of the block */
+.btn--orange {}
+.btn--big {}
 
                     </code>
                   </pre>
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Write some CSS styles</strong></p>
-                  <pre>
-                    <code data-noescape class="language-css">
-
-  /* affirm/progress/style.js */
-
-  .progress-bar {
-    width: 100%;
-    height: var(--spacing-small);
-    border-radius: var(--border-radius);
-    background-color: var(--black-10);
-    margin-bottom: var(--spacing-large);
-  }
-
-  .progress-bar__fill {
-    height: 100%;
-    background-color: var(--indigo);
-    border-radius: var(--border-radius);
-  }
-
-
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Please use <a href="https://css-tricks.com/bem-101/">BEM CSS naming conventions</a>!</strong></p>
-                  <pre>
-                    <code data-noescape class="language-css">
-
-  /* Block component */
-  .btn {}
-
-  /* Element that depends upon the block */
-  .btn__price {}
-
-  /* Modifier that changes the style of the block */
-  .btn--orange {}
-  .btn--big {}
-
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Create a guide in the Styleguide</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>Now let's create a guide in the Styleguide</p>
                   <img src="assets/progress-guide.png" alt="progress-guide" style="height: 40vh;">
                 </section>
                 <section>
-                  <h2>Example</h2>
-                  <p><strong>Create a guide in the Styleguide</strong></p>
+                  <h2>Styleguide</h2>
+                  <p>Define a guide demoing the component</p>
                   <pre>
                     <code data-trim data-noescape class="language-js">
-  import React from 'react'
-  import Guide from 'styleguide/src/guide'
-  import Progress from 'affirm/progress'
+import React from 'react'
+import Guide from 'styleguide/src/guide'
+import Progress from 'affirm/progress'
 
-  const ProgressBars = () =&gt;
-    &lt;Guide title="Progress"&gt;
-      &lt;Guide.Section title="Guidelines"&gt;
-        &lt;p&gt;Use this progress indicator do show a percentage of completion.&lt;/p&gt;
-      &lt;/Guide.Section&gt;
-      &lt;Guide.Section title="Progress"&gt;
-        &lt;Progress percent={0}/&gt;
-        &lt;Progress percent={25}/&gt;
-        &lt;Progress percent={50}/&gt;
-        &lt;Progress percent={75}/&gt;
-        &lt;Progress percent={100}/&gt;
-      &lt;/Guide.Section&gt;
-    &lt;/Guide&gt;
+const ProgressBars = () =&gt;
+  &lt;Guide title="Progress"&gt;
+    &lt;Guide.Section title="Guidelines"&gt;
+      &lt;p&gt;Use this progress indicator do show a percentage of completion.&lt;/p&gt;
+    &lt;/Guide.Section&gt;
+    &lt;Guide.Section title="Progress"&gt;
+      &lt;Progress percent={0}/&gt;
+      &lt;Progress percent={25}/&gt;
+      &lt;Progress percent={50}/&gt;
+      &lt;Progress percent={75}/&gt;
+      &lt;Progress percent={100}/&gt;
+    &lt;/Guide.Section&gt;
+  &lt;/Guide&gt;
 
-  export default ProgressBars
+export default ProgressBars
                     </code>
                   </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Should I put this component in the Styleguide?</strong></p>
-                  <ul>
-                    <li>Will this component be reused in other applications?</li>
-                    <li>What user interaction am I not currently able to do with the existing set of components?</li>
-                    <li>New Styleguide components should be UX driven not product driven.</li>
-                  </ul>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Wiring up a Counter component</strong></p>
-                  <ul>
-                    <li>synchronous action to increment the counter</li>
-                    <li>asynchronous action to decrement the counter</li>
-                    <li>REST endpoint to decrement the counter</li>
-                  </ul>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Create a mock endpoint</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/server.js
-
-  app.post('/decrement', function(request, response) {
-    const count = request.body.count
-    const result = { count: count - 1 }
-    // 1 second delay on the response
-    setTimeout(function() {
-      response.send(result)
-    }, 1000)
-  })
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Create a client side function to make the HTTP request</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/api.js
-
-  export async function decrement(count) {
-    return fetch('/decrement', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ count }),
-    })
-  }
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Define some action types</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/defs.js
-
-  export const INCREMENT = 'counter/increment'
-  export const DECREMENT_SENT = 'counter/decrement/sent'
-  export const DECREMENT_SUCCESS = 'counter/decrement/success'
-  export const DECREMENT_FAILED = 'counter/decrement/failed'
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Define the synchronous actions creators</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/actions/sync.js
-
-  export const increment = () => ({
-    type: defs.INCREMENT,
-  })
-
-  export const decrementSent = () => ({
-    type: defs.DECREMENT_SENT
-  })
-
-  export const decrementSuccess = count => ({
-    type: defs.DECREMENT_SUCCESS,
-    count,
-  })
-
-  export const decrementFailed = () => ({
-    type: defs.DECREMENT_FAILED,
-  })
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Define the async action creators</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/actions/async.js
-
-  export function decrement(count) {
-    return async dispatch => {
-      dispatch(sync.decrementSent())
-      const response = await api.decrement(count)
-      if (response.status !== 200) {
-        dispatch(sync.decrementFailed())
-      } else {
-        const result = await response.json()
-        dispatch(sync.decrementSuccess(result.count))
-        return result.count
-      }
-    }
-  }
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Define the initial state</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/reducer/index.js
-
-  const initialState = Immutable.Map({
-    count: 0,
-    pendingDecrement: false,
-  })
-
-  const reducer = (state=initialState, action) => {
-    // we'll get back to this
-  }
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Define the state mutators</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/reducer/mutators.js
-
-  export const increment = state =>
-    state.updateIn(['count'], count => count + 1)
-
-  export const setDecrementPending = value => state =>
-    state.setIn(['pendingDecrement'], value)
-
-  export const setCount = value => state =>
-    state.setIn(['count'], value)
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Define the state reducer</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/reducer/index.js
-
-  const reducer = (state=initialState, action) => {
-    case defs.INCREMENT:
-      return mutate.increment(state)
-    case defs.DECREMENT_SENT:
-      return mutate.setDecrementPending(true)(state)
-    case defs.DECREMENT_SUCCESS:
-      return pipe([
-        mutate.setDecrementPending(false),
-        mutate.setCount(action.count),
-      ], state)
-    case defs.DECREMENT_FAILED:
-      return pipe([
-        mutate.setDecrementPending(false),
-        mutate.addSnackbarItem('Decrement counter failed.'),
-      ], state)
-    default:
-      return state
-  }
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Wire up the component</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/components/counter/index.js
-
-  import React from 'react'
-  import { connect } from 'react-redux'
-  import Counter from 'app/src/components/counter/view'
-  import { increment, decrement } from 'crm/src/actions'
-
-  // get the relevant state
-  const mapStateToProps = state => ({
-    disabled: state.getIn(['pendingDecrement']),
-    count: state.getIn(['count']),
-  })
-
-  // continued...
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Wire up the component</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  // app/src/components/counter/index.js
-
-  // wire up the actions
-  const mapDispatchToProps = dispatch => ({
-    onIncrement: () => dispatch(increment()),
-    onDecrement: count => dispatch(decrement(count))
-  })
-
-  // connect the component to redux
-  export default connect(mapStateToProps, mapDispatchToProps)(Counter)
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Example</h2>
-                  <p><strong>Use the component wherever you'd like</strong></p>
-                  <pre>
-                    <code data-trim data-noescape class="language-js">
-  import Counter from 'app/src/components/counter'
-
-  // &lt;Counter/&gt;
-                    </code>
-                  </pre>
-                </section>
-                <section>
-                  <h2>Demo Time</h2>
-                  <ul>
-                    <li>Affirm Styleguide + Modular UI Components</li>
-                    <li>CRM + Redux Dev Tools</li>
-                    <li>Static type checking with Flow</li>
-                  </ul>
                 </section>
               </section>
             </div>
