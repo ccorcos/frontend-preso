@@ -48,7 +48,7 @@ what is a styleguide. demo before we add it.
                     <li>functional programming</li>
                     <li>build tools</li>
                     <li>react and redux</li>
-                    <li>examples and demos</li>
+                    <li>styleguide</li>
                   </ul>
                 </section>
                 <section>
@@ -190,9 +190,9 @@ isBirthday(me, today) // false
                     <h2>Functional Programming</h2>
                     <p><strong>Lesson 1:</strong> do not mutate data in-place</p>
                     <ul>
-                      <li>immutable data is easier to <i>understand</i></li>
-                      <li>immutable data is easier to <i>predict</i></li>
-                      <li>immutable data is easier to <i>statically analyze</i></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Immutable_object">immutable data</a> is easier to <i>understand</i></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Immutable_object">immutable data</a> is easier to <i>predict</i></li>
+                      <li><a href="https://en.wikipedia.org/wiki/Immutable_object">immutable data</a> is easier to <i>statically analyze</i></li>
                     </ul>
                   </section>
                   <section>
@@ -307,13 +307,13 @@ const getTotalOverdueAmount = loans => {
                     </pre>
                     <ul class="fragment">
                       <li>Hard to read!</li>
-                      <li>Harder to read and understand with more requirements.</li>
+                      <li>This code will rot quickly.</li>
                       <li>This code isn't <i>declarative</i>.</li>
                     </ul>
                   </section>
                   <section>
                     <h2>Functional Programming</h2>
-                    <p>What is <i>declarative</i> programming?</p>
+                    <p>What is <a href="https://en.wikipedia.org/wiki/Declarative_programming">declarative</a> programming?</p>
                     <p class="fragment">Say what you want, not how you want it done.</p>
                   </section>
                   <section>
@@ -365,7 +365,7 @@ const getTotalOverdueAmount = loans => {
                   </section>
                   <section>
                     <h2>Functional Programming</h2>
-                    <p>A curried funtion takes its argument's one at a time.</p>
+                    <p>A <a href="https://en.wikipedia.org/wiki/Currying">curried funtion</a> takes its argument's one at a time.</p>
                     <pre>
                       <code data-trim data-noescape class="language-js">
 const propEq = prop => value => obj => obj[prop] === value
@@ -437,7 +437,7 @@ const getTotalOverdueAmount = pipe([ <span class="fragment">// a point-free func
                   </section>
                   <section>
                     <h2>Functional Programming</h2>
-                    <p>What is a point-free function?</p>
+                    <p>What is a <a href="https://en.wikipedia.org/wiki/Tacit_programming">point-free</a> function?</p>
                     <p>"Point-free programming (a.k.a tacit programming) is when a function never identifies its arguments (points) and is intead a specified as composition of other functions."</p>
                     <pre>
                       <code data-trim data-noescape class="language-js">
@@ -462,12 +462,11 @@ const getTotalOverdueAmount = pipe([
 ])
                       </code>
                     </pre>
-                    <p class="fragment">I guess declarative programming sucks... <span class="fragment">Except it doesn't!</span></p>
                     <p class="fragment">We can use <i>generators</i>!</p>
                   </section>
                   <section>
                     <h2>Functional Programming</h2>
-                    <p>What's a <i>generator</i>?</p>
+                    <p>What's a <a href="https://en.wikipedia.org/wiki/Generator_(computer_programming)">generator</a>?</p>
                     <p>A generator is a function that yields values.</p>
                     <pre>
                       <code data-trim data-noescape class="language-js">
@@ -488,7 +487,7 @@ counter.next() // {value: 3, done: false}
                   <section>
                     <h2>Functional Programming</h2>
                     <p>Why do we use generators?</p>
-                    <p>Generators help us iterate <i>lazily</i> over lists.</p>
+                    <p>Generators help us iterate <a href="https://en.wikipedia.org/wiki/Lazy_evaluation">lazily</a> over lists.</p>
                     <pre>
                       <code data-trim data-noescape class="language-js">
 const list = [1, 2, 3]
@@ -631,12 +630,11 @@ const appendAction = (actions, action) => {
 }
                         </code>
                     </pre>
-                    <p class="fragment">I guess immutability sucks... <span class="fragment">Except it doesn't!</span></p>
                     <p class="fragment">We can use <i>persistent data structures</i>!</p>
                   </section>
                   <section>
                     <h2>Functional Programming</h2>
-                    <p>What are <i>persistent data structures</i>?</p>
+                    <p>What are <a href="https://en.wikipedia.org/wiki/Persistent_data_structure">persistent data structures</a>?</p>
                     <p>Data structures that preseve the previous version of itself when its modified... like a linked-list!</p>
                   </section>
                   <section>
@@ -651,19 +649,19 @@ const appendAction = (actions, action) => {
                       <p>ImmutableJS to the rescue!</p>
                       <pre>
                         <code data-trim data-noescape class="language-js">
-  import { List } from 'immutable'
+import { List } from 'immutable'
 
-  const actions = new List([
-    {type: 'click-make-payment', loanAri: 'JJR5-0PLM'},
-    {type: 'change-payment-method', instrumentAri: 'AF3S-353H'},
-    {type: 'change-amount', value: 'upcoming-count'},
-    {type: 'submit-make-payment'}
-    // many many more...
-  ])
+const actions = new List([
+  {type: 'click-make-payment', loanAri: 'JJR5-0PLM'},
+  {type: 'change-payment-method', instrumentAri: 'AF3S-353H'},
+  {type: 'change-amount', value: 'upcoming-count'},
+  {type: 'submit-make-payment'}
+  // many many more...
+])
 
-  const trackAction = (actions, action) => {
-    return actions.push(action)
-  }
+const trackAction = (actions, action) => {
+  return actions.push(action)
+}
                         </code>
                       </pre>
                     </div>
@@ -730,7 +728,6 @@ me.getIn(['name', 'first']) // 'Chet'
 &lt;/html&gt;
                       </code>
                     </pre>
-                    <p class="fragment">Right, Libor?</p>
                   </section>
                   <section>
                     <h2>Build Tools</h2>
@@ -771,7 +768,7 @@ LikeButton('like-button')
                   </section>
                   <section>
                     <h2>Build Tools</h2>
-                    <p>... but it doesnt work</p>
+                    <p>... but it this code doesn't work in the browser.</p>
                     <pre style="color:red; background-color: #eee; padding: 10px; padding-top: 25px; text-align: center;">
 Uncaught ReferenceError: require is not defined
                     </pre>
@@ -806,7 +803,7 @@ Uncaught ReferenceError: require is not defined
                       <code data-trim data-noescape class="language-js">
 // old school JavaScript
 function variadicFunction() {
-  var args = Array.prototype.slice.call(arguments) <span class="fragment">// very ouch</span>
+  var args = Array.prototype.slice.call(arguments) <span class="fragment">// oy</span>
   // ...
 }
 
@@ -1070,203 +1067,364 @@ page('/portal', async () => {
                   </section>
                   <section>
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
-                    <p><strong>What:</strong></p>
+                    <p>Let's build an vanilla counter component.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const Counter = (selector) => {
+  let count = 0
+  document.querySelector(selector).innerHtml = `
+    &lt;div class="counter"&gt;
+      &lt;label&gt;${count}&lt;/label&gt;
+      &lt;button&gt;increment&lt;/button&gt;
+    &lt;/div&gt;
+  `
+  const label = document.querySelector(selector + ' label')
+  const button = document.querySelector(selector + ' button')
+  button.addEventListener('click', () => {
+    count++
+    label.innerText = count
+  })
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>And it works...</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const div = document.createElement('div')
+div.id = 'my-counter'
+document.body.appendChild(div)
+Counter('#my-counter')
+                      </code>
+                    </pre>
+                    <p class="fragment">... but is it useful?</p>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>What if you want to use this component in the outside world?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const Counter = (selector, {initialCount, delta, listener}) => {
+  let count = initialCount || 0
+  // ...
+  const update = () => {
+    label.innerText = count
+    listener(count)
+  }
+  const increment = () => {
+    count += delta || 1
+    update()
+  }
+  button.addEventListener('click', increment)
+  return {
+    increment,
+    getCount: () => count,
+  }
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>And it works...</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const div = document.createElement('div')
+div.id = 'my-counter'
+document.body.appendChild(div)
+const myCounter = Counter('#my-counter', {
+  initialValue: 10,
+  listener: count => console.log(count),
+})
+myCounter.getCount() // 10
+myCounter.increment() // logs 11
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>Suppose we want one counter to be the "delta" of the other counter.</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+
+let myCounter = Counter('#my-counter', {
+  initialValue: 0,
+})
+<span class="fragment">
+const deltaCounter = Counter('#delta-counter', {
+  initialValue: 1,
+  listener: delta => {
+    myCounter = Counter('#my-counter', {
+      initialValue: myCounter.getValue(),
+      delta,
+    })
+  },
+})</span>
+                      </code>
+                    </pre>
+                    <p class="fragment">User interfaces are hard to build and maintain!</p>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>Why are user interfaces so hard to build?</p>
                     <ul>
-                      <li>declarative UI rendering using <a href="https://facebook.github.io/react/docs/reconciliation.html">virtual dom diffing</a></li>
-                      <li><a href="https://facebook.github.io/react/docs/events.html">cross-browser sanitized event system</a></li>
-                      <li><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">optional HTML dialect called JSX</a></li>
-                      <li><a href="https://www.npmjs.com/package/react-dom">DOM</a>, <a href="https://github.com/Flipboard/react-canvas">HTML5 Canvas</a>, <a href="https://github.com/toxicFork/react-three-renderer">WebGL</a>, <a href="https://github.com/Yomguithereal/react-blessed">Terminal</a>, <a href="https://www.google.com/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=react-native">iOS, and Android</a> renderers</li>
-                      <li>developed by Facebook</li>
+                      <li>asynchronous</li>
+                      <li>race conditions</li>
+                      <li>imperative</li>
+                    </ul>
+                    <p class="fragment">Let's just skip ahead...</p>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>What is React?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const Counter = (props) =>
+  &lt;div className="counter"&gt;
+    &lt;span&gt;{props.count}&lt;/span&gt;
+    &lt;button onClick={props.onIncrement}&gt;increment&lt;/button&gt;
+  &lt;/div&gt;
+                      </code>
+                    </pre>
+                    <ul>
+                      <li>a declarative renderer</li>
+                      <li>efficient DOM updates</li>
+                      <li>sanitized event system</li>
+                      <li>HTML flavored syntax called JSX</li>
                     </ul>
                   </section>
                   <section>
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
-                    <p><strong>Example</strong>: Hello World</p>
+                    <p>Demystifying JSX</p>
                     <pre>
                       <code data-trim data-noescape class="language-js">
-  import React from 'react'
-  import ReactDOM from 'react-dom'
-
-  const App = (props) =>
-    &lt;div className="app"&gt;
-      Hello World
-    &lt;/div&gt;
-
-  const root = document.getElementById('root')
-  ReactDOM.render(&lt;App/&gt;, root)
+const Counter = (props) =>
+  &lt;div className="counter"&gt;
+    &lt;span&gt;{props.count}&lt;/span&gt;
+    &lt;button onClick={props.onIncrement}&gt;increment&lt;/button&gt;
+  &lt;/div&gt;
+                      </code>
+                      <code data-trim data-noescape class="language-js">
+const Counter = (props) =>
+  React.createElement('div', {className: 'counter'},
+    React.createElement('span', {}, props.count),
+    React.createElement('button', {onClick: props.onIncrement}, 'increment')
+  )
                       </code>
                     </pre>
+                    <p class="fragment">... this just creates a "virtual DOM" tree</p>
                   </section>
                   <section>
                     <h2><a href="https://facebook.github.io/react/">React</a></h2>
-                    <p><strong>Example:</strong> Hello {name}</p>
-                    <pre>
-                      <code data-trim data-noescape class="language-js">
-  import React from 'react'
-  import ReactDOM from 'react-dom'
-
-  const App = (props) =>
-    &lt;div className="app"&gt;
-      Hello {props.name}
-    &lt;/div&gt;
-
-  const root = document.getElementById('root')
-  ReactDOM.render(&lt;App name="chet"/&gt;, root)
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
-                    <p><strong><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a>:</strong> HTML-flavored JavaScript</p>
-                    <pre>
-                      <code data-trim data-noescape class="language-js">
-  // before
-  const App = (props) =>
-    &lt;div className="app"&gt;
-      Hello {props.name}
-    &lt;/div&gt;
-  ReactDOM.render(&lt;App name="chet"/&gt;, root)
-
-  // after
-  const App = (props) =>
-    React.createElement('div', {className:'app'}, [
-      `Hello ${props.name}`
-    ])
-  ReactDOM.render(React.createElement(App, {name:'chet'}), root)
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
-                    <p><strong>Example:</strong> iOS renderer example</p>
-                    <pre>
-                      <code data-trim data-noescape class="language-js">
-  import React from 'react'
-  import { AppRegistry } from 'react-native'
-  import View1 from './src/view1'
-  import View2 from './src/view1'
-
-  const App = (props) =>
-    &lt;TabBarIOS&gt;
-      &lt;TabBarIOS.Item title="view1" icon={icon1}&gt;
-        &lt;View1/&gt;
-      &lt;/TabBarIOS.Item&gt;
-      &lt;TabBarIOS.Item title="view2" icon={icon2}&gt;
-        &lt;View2/&gt;
-      &lt;/TabBarIOS.Item&gt;
-    &lt;/TabBarIOS&gt;
-
-  // the rest is handled in swift
-  AppRegistry.registerComponent('App', &lt;App/&gt;)
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><i>"A predictable state container for JavaScript apps"</i></p>
+                    <p>Because it's declarative, we can have different renderers!</p>
                     <ul>
-                      <li>views and logic are all pure functions</li>
-                      <li>global action event bus</li>
-                      <li>state machine using a reducing function</li>
+                      <li><a href="https://www.npmjs.com/package/react-dom">DOM</a></li>
+                      <li><a href="https://github.com/Flipboard/react-canvas">HTML5 Canvas</a></li>
+                      <li><a href="https://github.com/toxicFork/react-three-renderer">WebGL</a></li>
+                      <li><a href="https://facebook.github.io/react-native/">iOS, and Android</a></li>
+                      <li><a href="https://github.com/Yomguithereal/react-blessed">Terminal</a></li>
                     </ul>
                   </section>
                   <section>
-                    <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><strong>Concept:</strong></p>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>Did you say Terminal?!</p>
+                    <img src="assets/blessed1.gif" alt="blessed-1">
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <img src="assets/blessed2.gif" alt="blessed-2">
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>Let's add some counter logic</p>
                     <pre>
                       <code data-trim data-noescape class="language-js">
-  import { createStore } from 'redux'
+import ReactDOM from 'react-dom'
 
-  const initialState = { count: 0 }
-  const reducer = (state=initialState, action) => {
-    switch(action.type) {
-      case 'increment':
-        return {
-          ...state,
-          count: state.count + 1,
-        }
+let count = 0
+const onIncrement = () => {
+  count++
+  loop()
+}
+
+const root = document.getElementById('root')
+const loop = () => {
+  ReactDOM.render(
+    &lt;Counter count={count} onIncrement={onIncrement}/&gt;,
+    root
+  )
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>How about the delta counters example?</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+let count = 0
+let delta = 1
+const onIncrementCount = () => {
+  count += delta
+  loop()
+}
+const onIncrementDelta = () => {
+  delta++
+  loop()
+}
+const loop = () => {
+  const root = document.getElementById('root')
+  ReactDOM.render(
+    &lt;div&gt;
+      &lt;Counter count={delta} onIncrement={onIncrementDelta}/&gt;
+      &lt;Counter count={count} onIncrement={onIncrementCount}/&gt;
+    &lt;/div&gt;,
+    root
+  )
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>This is bad...</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+let count = 0
+let delta = 1
+const onIncrementCount = () => {
+  count += delta
+  loop()
+}
+const onIncrementDelta = () => {
+  delta++
+  loop()
+}
+                      </code>
+                    </pre>
+                    <ul class="fragment">
+                      <li>mutations</li>
+                      <li>side-effects</li>
+                      <li>imperative</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>Let's try to be more declarative</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const initialState = {
+  count: 0,
+  delta: 1,
+}
+
+const update = (state, action) => { <span class="fragment">// looks like a reducing function!</span>
+  if (action === 'increment/count') {
+    return {
+      ...state,
+      count: state.count + state.delta,
     }
   }
-
-  const store = createStore(reducer)
-
-  store.getState() // { count: 0 }
-  store.dispatch({type: 'increment'})
-  store.getState() // { count: 1 }
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><strong>Example:</strong> Vanilla JS</p>
-                    <pre>
-                      <code data-trim data-noescape class="language-js">
-  store.subscribe(state => {
-    const root = document.getElementById('root')
-    root.innerHTML = `
-      &lt;div&gt;
-        &lt;button id="increment"&gt;increment&lt;/button&gt;
-        &lt;span&gt;${state.count}&lt;/span&gt;
-      &lt;/div&gt;
-    `
-    document.getElementById('incremenet').on('click', () => {
-      store.dispatch({type: 'increment'})
-    })
-  })
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><strong>Example:</strong> React</p>
-                    <pre>
-                      <code data-trim data-noescape class="language-js">
-  import { connect } from 'react-redux'
-
-  const CounterView = (props) =>
-    &lt;div&gt;
-      &lt;button onClick={props.increment}&gt;increment&lt;/button&gt;
-      &lt;span&gt;{props.count}&lt;/span&gt;
-    &lt;/div&gt;
-
-  const mapStateToProps = state => ({
-    count: state.count
-  })
-
-  const mapDispatchToProps = dispatch => ({
-    increment: () => dispatch({type: 'increment'})
-  })
-
-  const Counter = connect(mapStateToProps, mapDispatchToProps)(CounterView)
-                      </code>
-                    </pre>
-                  </section>
-                  <section>
-                    <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><strong>Middleware:</strong> get inbetween dispatch and the reducer</p>
-                    <pre>
-                      <code data-trim data-noescape class="language-js">
-  import track from 'shared/src/scripts/analytics/tracking'
-
-  const middleware = store => next => action => {
-    track.event('redux_action', { action })
-    return next(action)
+  if (action === 'increment/delta') {
+    return {
+      ...state,
+      delta: state.delta + 1,
+    }
   }
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="https://facebook.github.io/react/">React</a></h2>
+                    <p>Let's wire it up!</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+const start = (initialState, update, loop) => {
+  let state = initialState
+  const dispatch = (action) => {
+    state = update(state, action)
+    loop(state, dispatch)
+  }
+  loop(state, dispatch)
+}
+
+const loop = (state, dispatch) => {
+  const onIncrementDelta = () => dispatch('increment/delta')
+  const onIncrementCount = () => dispatch('increment/count')
+  ReactDOM.render(
+    &lt;div&gt;
+      &lt;Counter count={state.delta} onIncrement={onIncrementDelta}/&gt;
+      &lt;Counter count={state.count} onIncrement={onIncrementCount}/&gt;
+    &lt;/div&gt;,
+    root
+  )
+}
                       </code>
                     </pre>
                   </section>
                   <section>
                     <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><strong>Dev Tools:</strong> chrome extension</p>
-                    <img class="large" src="assets/redux-chrome-extension.png" alt="redux-chrome-extension">
+                    <p>That's the concept of <a href="redux.js.org">Redux</a>!</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+import { createStore } from 'redux'
+
+const initialState = { count: 0 }
+
+const reducer = (state=initialState, action) => {
+  switch(action.type) {
+    case 'increment':
+      return {
+        ...state,
+        count: state.count + 1,
+      }
+  }
+}
+
+const store = createStore(reducer)
+
+store.getState() // { count: 0 }
+store.dispatch({type: 'increment'})
+store.getState() // { count: 1 }
+                      </code>
+                    </pre>
                   </section>
                   <section>
                     <h2><a href="redux.js.org">Redux</a></h2>
-                    <p><strong>Time Travel:</strong> replay sessions</p>
-                    <img class="large" src="assets/time-travel.png" alt="time-travel">
+                    <p>Additional perks with Redux</p>
+                    <ul>
+                      <li>Track user actions all in one place</li>
+                      <li>Render any page / state of your application easily</li>
+                      <li>Easily reproduce any sequence interactions</li>
+                      <li>Easy to introspect what's going on in your application</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p>Middleware let's you get inbetween dispatch and the reducer</p>
+                    <pre>
+                      <code data-trim data-noescape class="language-js">
+import track from 'shared/src/scripts/analytics/tracking'
+import scrub from 'shared/src/scripts/analytics/scrub'
+
+const middleware = store => next => action => {
+  track.event('redux_action', { action: scrub(action) })
+  return next(action)
+}
+                      </code>
+                    </pre>
+                  </section>
+                  <section>
+                    <h2><a href="redux.js.org">Redux</a></h2>
+                    <p>Redux DevTool demo</p>
+                    <img class="large" src="assets/time-travel.png" alt="time-travel" style="height:60%;">
                   </section>
                 </section>
               </section>
+
               <section>
                 <section>
                   <h2>Example</h2>
